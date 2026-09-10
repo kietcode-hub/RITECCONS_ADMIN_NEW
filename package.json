@@ -1,0 +1,20 @@
+{
+  "name": "rmc-ms",
+  "private": true,
+  "version": "0.1.0",
+  "description": "He thong Quan tri San xuat - Kinh doanh Be tong Thuong pham (RMC-MS)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:shared-types": "npm run build -w packages/shared-types",
+    "build:business-rules": "npm run build -w packages/business-rules",
+    "build:packages": "npm run build:shared-types && npm run build:business-rules",
+    "test:business-rules": "npm run test -w packages/business-rules",
+    "dev:api": "npm run start:dev -w apps/api"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

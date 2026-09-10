@@ -1,0 +1,371 @@
+// Prisma schema - "luong xuong song" (Buoc 1 trong CLAUDE.md / roadmap ky thuat).
+// Chi gom cac entity can cho luong: Khach hang/Cong trinh -> Don hang -> Ke hoach
+// -> Dieu phoi -> Chuyen -> Phieu giao hang. Cac entity con lai (chat luong, vat tu,
+// tai chinh, tich hop...) se bo sung khi trien khai module tuong ung - xem day du
+// 48 thuc the tai files/04_SRS_He_thong_quan_tri_be_tong.md SS3.1.
+//
+// QUY UOC BAT BUOC (BRULE-17, SRS SS2.1): moi bang nghiep vu co branchId va PHAI
+// duoc loc theo pham vi chi nhanh o tang service - khong duoc dua vao Prisma
+// middleware/RLS don le lam co che bao mat duy nhat.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- To chuc & quyen (E-01..E-06) ----------
+
+model Company {
+  id       String   @id @default(uuid())
+  name     String
+  taxCode  String?
+  branches Branch[]
+}
+
+model Branch {
+  id                      String   @id @default(uuid())
+  companyId               String
+  company                 Company  @relation(fields: [companyId], references: [id])
+  code                    String   @unique
+  name                    String
+  address                 String?
+  cutoffTime              String   @default("16:00") // "HH:mm" - FR-M01-09
+  nightShiftSurchargeTime String   @default("18:00")
+
+  plants          Plant[]
+  users           User[]
+  customers       Customer[]
+  sites           Site[]
+  orders          Order[]
+  productionPlans ProductionPlan[]
+  vehicles        Vehicle[]
+  drivers         Driver[]
+
+  @@map("branches")
+}
+
+model Plant {
+  id               String @id @default(uuid())
+  branchId         String
+  branch           Branch @relation(fields: [branchId], references: [id])
+  code             String
+  capacityM3PerHr  Float
+  lineCount        Int    @default(1)
+
+  productionPlans ProductionPlan[]
+
+  @@map("plants")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  defaultBranchId String
+  defaultBranch   Branch @relation(fields: [defaultBranchId], references: [id])
+  fullName    String
+  email       String?  @unique
+  phone       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  drivers Driver[]
+
+  @@map("users")
+}
+
+// ---------- Khach hang & ban hang (E-07..E-10) ----------
+
+model Customer {
+  id            String  @id @default(uuid())
+  branchId      String
+  branch        Branch  @relation(fields: [branchId], references: [id])
+  name          String
+  taxCode       String?
+  phone         String?
+  salesRepUserId String?
+
+  sites       Site[]
+  creditLimit CreditLimit?
+
+  @@index([branchId])
+  @@map("customers")
+}
+
+model Site {
+  id                   String   @id @default(uuid())
+  branchId             String
+  branch               Branch   @relation(fields: [branchId], references: [id])
+  customerId           String
+  customer             Customer @relation(fields: [customerId], references: [id])
+  name                 String
+  address              String
+  lat                  Float?
+  lng                  Float?
+  distanceFromPlantKm  Float?
+
+  orders Order[]
+
+  @@index([branchId])
+  @@map("sites")
+}
+
+// ---------- Gia & hop dong (E-19 rut gon) ----------
+
+model CreditLimit {
+  customerId              String   @id
+  customer                Customer @relation(fields: [customerId], references: [id])
+  limitAmount             Decimal  @db.Decimal(16, 2)
+  termDays                Int
+  outstandingDebt         Decimal  @db.Decimal(16, 2) @default(0)
+  confirmedUnbilledOrders Decimal  @db.Decimal(16, 2) @default(0)
+  maxAllowedOverdueDays   Int      @default(30)
+  approvedByUserId        String?
+  updatedAt               DateTime @updatedAt
+
+  @@map("credit_limits")
+}
+
+// ---------- Cap phoi & dinh muc (E-22, E-23 rut gon) ----------
+
+enum MixDesignStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+model MixDesign {
+  id           String          @id @default(uuid())
+  code         String          @unique
+  productGrade String // vi du "M300"
+  slumpCm      Float
+  dmaxMm       Float
+  pumpable     Boolean         @default(true)
+  status       MixDesignStatus @default(DRAFT)
+  version      Int             @default(1)
+
+  items  MixDesignItem[]
+  orders Order[]
+
+  @@map("mix_designs")
+}
+
+model MixDesignItem {
+  id           String    @id @default(uuid())
+  mixDesignId  String
+  mixDesign    MixDesign @relation(fields: [mixDesignId], references: [id])
+  materialCode String
+  qtyPerM3     Float
+  unit         String
+
+  @@map("mix_design_items")
+}
+
+// ---------- Don hang (E-20) ----------
+
+enum OrderStatus {
+  DRAFT
+  PENDING_CONFIRM
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum PumpMethod {
+  BOOM_PUMP
+  LINE_PUMP
+  DIRECT_DISCHARGE
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  branchId         String
+  branch           Branch      @relation(fields: [branchId], references: [id])
+  orderNo          String      @unique
+  siteId           String
+  site             Site        @relation(fields: [siteId], references: [id])
+  mixDesignId      String?
+  mixDesign        MixDesign?  @relation(fields: [mixDesignId], references: [id])
+  pourDateTime     DateTime
+  volumeM3         Float
+  pumpMethod       PumpMethod  @default(DIRECT_DISCHARGE)
+  siteContactName  String
+  siteContactPhone String
+  status           OrderStatus @default(DRAFT)
+  isUrgent         Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+
+  planLines PlanLine[]
+  trips     Trip[]
+
+  @@index([branchId])
+  @@map("orders")
+}
+
+// ---------- Ke hoach san xuat (E-28, E-29) ----------
+
+enum ProductionPlanStatus {
+  DRAFT
+  LOCKED
+  IN_PROGRESS
+  CLOSED
+}
+
+model ProductionPlan {
+  id       String               @id @default(uuid())
+  branchId String
+  branch   Branch               @relation(fields: [branchId], references: [id])
+  plantId  String
+  plant    Plant                @relation(fields: [plantId], references: [id])
+  planDate DateTime             @db.Date
+  shift    String // MORNING | AFTERNOON | NIGHT
+  status   ProductionPlanStatus @default(DRAFT)
+
+  lines PlanLine[]
+
+  @@index([branchId])
+  @@map("production_plans")
+}
+
+model PlanLine {
+  id            String         @id @default(uuid())
+  planId        String
+  plan          ProductionPlan @relation(fields: [planId], references: [id])
+  orderId       String
+  order         Order          @relation(fields: [orderId], references: [id])
+  timeSlotStart DateTime
+  volumeM3      Float
+
+  @@map("plan_lines")
+}
+
+// ---------- Doi xe (E-34, E-36 rut gon) ----------
+
+enum VehicleStatus {
+  AVAILABLE
+  RUNNING
+  MAINTENANCE
+  STOPPED
+}
+
+model Vehicle {
+  id           String        @id @default(uuid())
+  branchId     String
+  branch       Branch        @relation(fields: [branchId], references: [id])
+  plateNumber  String        @unique
+  capacityM3   Float
+  owned        Boolean       @default(true)
+  status       VehicleStatus @default(AVAILABLE)
+
+  trips   Trip[]
+  drivers Driver[]
+
+  @@index([branchId])
+  @@map("vehicles")
+}
+
+model Driver {
+  id                String   @id @default(uuid())
+  branchId          String
+  branch            Branch   @relation(fields: [branchId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  licenseNumber     String
+  licenseExpiry     DateTime @db.Date
+  defaultVehicleId  String?
+  defaultVehicle    Vehicle? @relation(fields: [defaultVehicleId], references: [id])
+
+  trips Trip[]
+
+  @@index([branchId])
+  @@map("drivers")
+}
+
+// ---------- Chuyen & phieu giao hang (E-30, E-32) ----------
+
+enum TripStatus {
+  CREATED
+  ASSIGNED
+  MIXING
+  DEPARTED
+  ARRIVED
+  POURING
+  POUR_DONE
+  RETURNED
+  COMPLETED
+  INCIDENT
+  CANCELLED
+}
+
+model Trip {
+  id              String     @id @default(uuid())
+  orderId         String
+  order           Order      @relation(fields: [orderId], references: [id])
+  vehicleId       String
+  vehicle         Vehicle    @relation(fields: [vehicleId], references: [id])
+  driverId        String
+  driver          Driver     @relation(fields: [driverId], references: [id])
+  sequenceNo      Int
+  volumeM3        Float
+  status          TripStatus @default(CREATED)
+  mixingStartedAt DateTime?
+  departedAt      DateTime?
+  arrivedAt       DateTime?
+  pourStartedAt   DateTime?
+  pourDoneAt      DateTime?
+  returnedAt      DateTime?
+
+  deliveryNote DeliveryNote?
+
+  @@map("trips")
+}
+
+enum DeliveryNoteStatus {
+  DRAFT
+  PENDING_SIGNATURE
+  SIGNED
+  LOCKED
+  ADJUSTMENT_REQUESTED
+  ADJUSTED
+}
+
+model DeliveryNote {
+  id                   String             @id @default(uuid())
+  noteNo               String             @unique // vd PGH-CN1-260908-0456 (FR-M01-13)
+  tripId               String             @unique
+  trip                 Trip               @relation(fields: [tripId], references: [id])
+  volumeOrdered        Float
+  volumeActual         Float
+  volumeVarianceReason String? // bat buoc khi lech > 5% (BRULE-15)
+  slumpCm              Float?
+  signedByName         String?
+  signedAt             DateTime?
+  signatureImageUrl    String?
+  signatureLat         Float?
+  signatureLng         Float?
+  status               DeliveryNoteStatus @default(DRAFT)
+
+  @@map("delivery_notes")
+}
+
+// ---------- He thong (E-46 rut gon) ----------
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  entityName String
+  entityId   String
+  oldValue   Json?
+  newValue   Json?
+  createdAt  DateTime @default(now())
+
+  // BRULE-18: append-only, khong co API xoa/sua audit log
+  @@map("audit_logs")
+}
