@@ -1,0 +1,5401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
+<title>RITECCONS</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+  background:#f28c28;
+  color:#182230;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.topbar{
+  background:#fff;
+  border-bottom:1px solid #e3e8ef;
+}
+
+.topbar-inner,
+.page{
+  width:min(
+    1200px,
+    calc(100% - 30px)
+  );
+  margin:auto;
+}
+
+.topbar-inner{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand-logo,
+.login-logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f28c28;
+  color:#fff;
+  font-weight:900;
+}
+
+.brand-logo{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+}
+
+.brand-name{
+  font-size:17px;
+  font-weight:900;
+}
+
+.brand-sub{
+  color:#667085;
+  font-size:11px;
+}
+
+.page{
+  margin:
+    25px auto 40px;
+}
+
+.login-page{
+  min-height:
+    calc(100vh - 120px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e3e8ef;
+  border-radius:18px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:
+    0 5px 18px
+    rgba(16,24,40,.06);
+}
+
+.login-card{
+  width:min(
+    450px,
+    100%
+  );
+  padding:36px;
+  border-radius:22px;
+}
+
+.login-logo{
+  width:78px;
+  height:78px;
+  border-radius:22px;
+  font-size:24px;
+  margin:
+    0 auto 16px;
+}
+
+.login-title{
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+}
+
+.login-subtitle{
+  text-align:center;
+  color:#667085;
+  margin:
+    8px 0 26px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+  gap:14px;
+}
+
+.full{
+  grid-column:
+    1 / -1;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.form-label{
+  margin-bottom:7px;
+  font-size:13px;
+  font-weight:800;
+  color:#344054;
+}
+
+input,
+select{
+  width:100%;
+  height:46px;
+  padding:
+    0 12px;
+  border:
+    1px solid #d0d5dd;
+  border-radius:10px;
+  background:#fff;
+  color:#182230;
+  font-size:14px;
+  outline:none;
+}
+
+input:focus,
+select:focus{
+  border-color:#1a73e8;
+  box-shadow:
+    0 0 0 3px
+    rgba(
+      26,
+      115,
+      232,
+      .10
+    );
+}
+
+input[readonly]{
+  background:#f8fafc;
+}
+
+button{
+  min-height:46px;
+  padding:
+    0 16px;
+  border:0;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.btn-primary{
+  background:#1a73e8;
+  color:#fff;
+}
+
+.btn-green{
+  background:#0b8043;
+  color:#fff;
+}
+
+.btn-red{
+  background:#d93025;
+  color:#fff;
+}
+
+.btn-orange{
+  background:#f29900;
+  color:#fff;
+}
+
+.action-row{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.action-row > *{
+  flex:1;
+}
+
+.hero{
+  padding:27px 28px;
+  border-radius:20px;
+  background:#172a46;
+  color:#fff;
+  margin-bottom:18px;
+}
+
+.hero-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.hero-title{
+  font-size:26px;
+  font-weight:900;
+}
+
+.hero-sub{
+  margin-top:6px;
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      .80
+    );
+}
+
+.hero-badge{
+  padding:
+    8px 12px;
+  border-radius:999px;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .12
+    );
+  font-size:11px;
+  font-weight:800;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:900;
+}
+
+.section-note{
+  margin-top:4px;
+  color:#667085;
+  font-size:12px;
+}
+
+.message{
+  padding:
+    11px 13px;
+  border-radius:10px;
+  margin-top:12px;
+  text-align:center;
+  font-size:13px;
+  font-weight:800;
+}
+
+.message.success{
+  background:#ecfdf3;
+  color:#067647;
+  border:
+    1px solid #c7f0d7;
+}
+
+.message.error{
+  background:#fff1f0;
+  color:#b42318;
+  border:
+    1px solid #ffd6d2;
+}
+
+.meta{
+  margin-top:4px;
+  font-size:12px;
+  color:#667085;
+}
+
+.list-row,
+.project-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:12px 0;
+  border-bottom:
+    1px solid #eef1f5;
+}
+
+.template-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,1fr);
+  gap:12px;
+}
+
+.template-option{
+  padding:15px;
+  border:
+    2px solid #dfe5ec;
+  border-radius:14px;
+  cursor:pointer;
+}
+
+.template-option.active{
+  border-color:#1a73e8;
+  background:#f2f7ff;
+}
+
+.template-number{
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background:#e8f0fe;
+  color:#1a73e8;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.chon-dia-diem-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.btn-dia-diem{
+  width:100%;
+  min-height:86px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  text-align:left;
+  border:2px solid #dfe5ec;
+  background:#fff;
+  color:#182230;
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  transition:all .15s ease;
+}
+
+.btn-dia-diem:hover{
+  transform:translateY(-1px);
+  border-color:#1a73e8;
+  box-shadow:0 5px 14px rgba(26,115,232,.12);
+}
+
+.btn-dia-diem:active{
+  transform:translateY(0);
+}
+
+.btn-dia-diem.active{
+  border-color:#1a73e8;
+  background:#f2f7ff;
+}
+
+.dia-diem-ma{
+  flex:0 0 48px;
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:#e8f0fe;
+  color:#1a73e8;
+  font-weight:900;
+  font-size:17px;
+}
+
+.dia-diem-text{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.dia-diem-text b{
+  font-size:15px;
+}
+
+.dia-diem-text small{
+  color:#6b7280;
+  font-weight:600;
+}
+
+@media (max-width:700px){
+  .chon-dia-diem-actions{
+    grid-template-columns:1fr;
+  }
+}
+
+.cap-box{
+  margin-top:16px;
+  padding:15px;
+  border:
+    1px solid #e3e8ef;
+  border-radius:14px;
+  background:#f8fafc;
+}
+
+.cap-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+  gap:9px;
+  margin-top:10px;
+}
+
+.cap-item{
+  padding:9px;
+  border:
+    1px solid #d0d5dd;
+  border-radius:9px;
+  background:#fff;
+}
+
+.cap-name{
+  font-size:10px;
+  color:#667085;
+  font-weight:800;
+}
+
+.cap-value{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:900;
+}
+
+.ticket{
+  padding:18px;
+  border:
+    1px solid #e3e8ef;
+  border-left:
+    5px solid #1a73e8;
+  border-radius:15px;
+  background:#fff;
+  margin-bottom:14px;
+}
+
+.ticket-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.ticket-title{
+  font-size:18px;
+  font-weight:900;
+}
+
+.badge{
+  padding:6px 9px;
+  border-radius:999px;
+  background:#eef4ff;
+  color:#1a73e8;
+  font-size:11px;
+  font-weight:800;
+}
+
+.ticket-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,1fr);
+  gap:9px;
+  margin-top:14px;
+}
+
+.ticket-item{
+  padding:10px;
+  border-radius:9px;
+  background:#f8fafc;
+}
+
+.ticket-label{
+  font-size:10px;
+  color:#667085;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.ticket-value{
+  margin-top:4px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.status-box{
+  margin-top:13px;
+  padding:12px;
+  border:
+    1px solid #dfe5ec;
+  border-radius:11px;
+  background:#f8fafc;
+}
+
+.status-title{
+  font-size:10px;
+  color:#667085;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.status-value{
+  margin-top:4px;
+  font-size:17px;
+  font-weight:900;
+}
+
+.driver-actions{
+  display:grid;
+  grid-template-columns:
+    repeat(2,1fr);
+  gap:10px;
+  margin-top:13px;
+}
+
+.driver-stats{
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.driver-stat{
+  padding:16px;
+  background:#fff;
+  border:
+    1px solid #e3e8ef;
+  border-radius:15px;
+  text-align:center;
+}
+
+.driver-stat-label{
+  font-size:10px;
+  color:#667085;
+  font-weight:900;
+}
+
+.driver-stat-number{
+  margin-top:4px;
+  font-size:30px;
+  font-weight:900;
+}
+
+.driver-stat-total
+.driver-stat-number{
+  color:#175cd3;
+}
+
+.driver-stat-success
+.driver-stat-number{
+  color:#0b8043;
+}
+
+.driver-stat-fail
+.driver-stat-number{
+  color:#d93025;
+}
+
+.empty{
+  padding:30px 10px;
+  text-align:center;
+  color:#667085;
+}
+
+.print-only{
+  display:none;
+}
+
+@media(max-width:700px){
+
+  .form-grid,
+  .template-grid,
+  .ticket-grid,
+  .cap-grid,
+  .driver-stats{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+  .hero-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .action-row,
+  .driver-actions{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .login-card{
+    padding:25px;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:#fff !important;
+  }
+
+  .topbar,
+  #page{
+    display:none !important;
+  }
+
+  .print-only{
+    display:block !important;
+  }
+
+  .print-page{
+    padding:4mm;
+    font-family:
+      Arial,
+      sans-serif;
+    color:#000;
+  }
+
+  .p-company{
+    text-align:center;
+    color:#31567f;
+    font-size:22px;
+    font-weight:900;
+  }
+
+  .p-sub{
+    text-align:center;
+    font-size:18px;
+    font-weight:900;
+  }
+
+  .p-title{
+    text-align:center;
+    font-size:19px;
+    font-weight:900;
+    margin:6px 0;
+  }
+
+  .p-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+
+  .p-table th,
+  .p-table td{
+    border:
+      1px solid #000;
+    padding:5px;
+    vertical-align:middle;
+  }
+
+  .red{
+    background:#ee2f23;
+  }
+
+  .blue{
+    background:#31567f;
+    color:#fff;
+  }
+
+  .orange{
+    background:#f6a23a;
+  }
+
+  .lightblue{
+    background:#dbe5f4;
+    text-align:center;
+    font-weight:900;
+  }
+
+  .p-sign{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+    text-align:center;
+  }
+
+  .p-sign td{
+    border:0;
+    width:50%;
+    padding:4px;
+  }
+
+  .sigspace{
+    height:60px;
+  }
+
+}
+
+</style>
+
+<script>
+(function () {
+  if (window.google && window.google.script && window.google.script.run) return;
+
+  // QUAN TRỌNG: mỗi lời gọi google.script.run.withSuccessHandler(...).tenHam(...)
+  // phải có state (success/failure) RIÊNG, không dùng chung 1 biến cho mọi lời gọi —
+  // nếu dùng chung, khi trang gọi nhiều API gần như cùng lúc (vd mở trang Vận hành
+  // tải khách hàng + dự án + tài xế song song), lời gọi sau sẽ ghi đè handler của
+  // lời gọi trước, khiến kết quả trả về bị gán nhầm cho handler khác.
+  function createRunner() {
+    const state = { success: null, failure: null };
+    const api = new Proxy({}, {
+      get(_target, prop) {
+        if (prop === 'withSuccessHandler') return function (fn) { state.success = fn; return api; };
+        if (prop === 'withFailureHandler') return function (fn) { state.failure = fn; return api; };
+        if (prop === 'withUserObject') return function () { return api; };
+        return function (...args) {
+          fetch('/api/apps-script', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: String(prop), args })
+          })
+          .then(async r => {
+            const text = await r.text();
+            let data;
+            try { data = JSON.parse(text); }
+            catch (_) { throw new Error('Server không trả JSON hợp lệ.'); }
+            if (data && data.success === false && state.failure) state.failure({message: data.message || 'API lỗi'});
+            else if (state.success) state.success(data);
+          })
+          .catch(err => {
+            if (state.failure) state.failure({message: err.message || String(err)});
+            else console.error(err);
+          });
+        };
+      }
+    });
+    return api;
+  }
+
+  window.google = window.google || {};
+  window.google.script = window.google.script || {};
+  Object.defineProperty(window.google.script, 'run', {
+    get: createRunner,
+    configurable: true
+  });
+})();
+</script>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     TOPBAR
+========================================================= -->
+
+<div
+  id="topbar"
+  class="topbar hidden"
+>
+
+  <div class="topbar-inner">
+
+    <div class="brand">
+
+      <div class="brand-logo">
+        RC
+      </div>
+
+      <div>
+
+        <div class="brand-name">
+          RITECCONS
+        </div>
+
+        <div class="brand-sub">
+          HỆ THỐNG QUẢN LÝ GIAO BÊ TÔNG
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="page"
+  class="page"
+>
+
+
+<!-- =========================================================
+     LOGIN
+========================================================= -->
+
+<section
+  id="loginPage"
+  class="login-page"
+>
+
+  <div class="card login-card">
+
+    <div class="login-logo">
+      RC
+    </div>
+
+    <div class="login-title">
+      RITECCONS
+    </div>
+
+    <div class="login-subtitle">
+      HỆ THỐNG QUẢN LÝ GIAO BÊ TÔNG
+    </div>
+
+
+    <div class="form-group">
+
+      <label class="form-label">
+        Mã tài khoản / mã tài xế
+      </label>
+
+      <input
+        id="maDangNhap"
+        placeholder="Nhập mã tài khoản"
+      >
+
+    </div>
+
+
+    <div
+      class="form-group"
+      style="margin-top:12px"
+    >
+
+      <label class="form-label">
+        Mật khẩu
+      </label>
+
+      <input
+        id="matKhau"
+        type="password"
+        placeholder="Nhập mật khẩu"
+      >
+
+    </div>
+
+
+    <button
+      id="btnLogin"
+      class="btn-primary"
+      style="
+        width:100%;
+        margin-top:16px;
+      "
+      onclick="dangNhap()"
+    >
+      ĐĂNG NHẬP
+    </button>
+
+
+    <div
+      id="loginMessage"
+      class="message hidden"
+    ></div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ADMIN
+========================================================= -->
+<section id="adminPage" class="hidden">
+  <div class="hero">
+    <div class="hero-row"><div>
+      <div class="hero-title">QUẢN TRỊ HỆ THỐNG</div>
+      <div id="thongTinAdmin" class="hero-sub"></div>
+    </div><div class="hero-badge">ADMIN</div></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">DỮ LIỆU BẢNG - PHÂN QUYỀN XEM</div>
+    <div class="section-note">ADMIN chọn tài khoản và tick những sheet Google Sheet mà tài khoản đó được xem toàn bộ dữ liệu thô (chỉ xem, không sửa/xóa/thêm).</div>
+    <div class="form-grid" style="margin-top:14px">
+      <div class="form-group full"><label class="form-label">TÀI KHOẢN</label><select id="adminTaiKhoanSelect" onchange="adminChonTaiKhoan()"></select></div>
+      <div class="form-group full"><label class="form-label">VAI TRÒ</label><input id="adminVaiTro" readonly></div>
+    </div>
+    <div id="adminSheetCheckboxes" style="margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"></div>
+    <div class="action-row"><button class="btn-primary" onclick="adminLuuQuyen()">LƯU QUYỀN</button></div>
+    <div id="adminMessage" class="message hidden"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">DANH SÁCH PHÂN QUYỀN</div>
+    <div id="adminDanhSachQuyen" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card" id="duLieuBangAdminCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangAdminDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangAdminNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+  <div class="action-row"><button class="btn-red" onclick="dangXuat()">ĐĂNG XUẤT</button></div>
+</section>
+
+<!-- =========================================================
+     KE TOAN
+========================================================= -->
+
+<section
+  id="keToanPage"
+  class="hidden"
+>
+
+  <div class="hero">
+
+    <div class="hero-row">
+
+      <div>
+
+        <div class="hero-title">
+          TRUNG TÂM KẾ TOÁN
+        </div>
+
+        <div
+          id="thongTinKeToan"
+          class="hero-sub"
+        ></div>
+
+      </div>
+
+      <div class="hero-badge">
+        KẾ TOÁN
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- KHÁCH HÀNG -->
+
+  <div class="card">
+
+    <div class="section-title">
+      THÊM KHÁCH HÀNG
+    </div>
+
+    <div class="section-note">
+      Quản lý đơn vị mua hàng.
+    </div>
+
+
+    <div
+      class="form-grid"
+      style="margin-top:14px"
+    >
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Tên khách hàng
+        </label>
+
+        <input
+          id="tenKhachHang"
+          placeholder="Tên khách hàng"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Địa chỉ
+        </label>
+
+        <input
+          id="diaChiKhachHang"
+          placeholder="Địa chỉ"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="action-row">
+
+      <button
+        class="btn-primary"
+        onclick="themKhachHang()"
+      >
+        + THÊM KHÁCH HÀNG
+      </button>
+
+    </div>
+
+
+    <div
+      id="khachHangMessage"
+      class="message hidden"
+    ></div>
+
+  </div>
+
+
+  <!-- DỰ ÁN -->
+
+  <div class="card">
+
+    <div class="section-title">
+      QUẢN LÝ DỰ ÁN
+    </div>
+
+    <div class="section-note">
+      Dự án độc lập với khách hàng.
+    </div>
+
+
+    <div
+      class="form-grid"
+      style="margin-top:14px"
+    >
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Tên dự án
+        </label>
+
+        <input
+          id="tenDuAn"
+          placeholder="Nhập tên dự án"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Địa chỉ
+        </label>
+
+        <input
+          id="diaChiDuAn"
+          placeholder="Nhập địa chỉ công trình"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="action-row">
+
+      <button
+        class="btn-primary"
+        onclick="themDuAn()"
+      >
+        + THÊM DỰ ÁN
+      </button>
+
+    </div>
+
+
+    <div
+      id="duAnMessage"
+      class="message hidden"
+    ></div>
+
+
+    <div
+      id="danhSachDuAn"
+      style="margin-top:12px"
+    ></div>
+
+  </div>
+
+
+  <!-- KHÁCH HÀNG LIST -->
+
+  <div class="card">
+
+    <div class="section-title">
+      DANH SÁCH KHÁCH HÀNG
+    </div>
+
+
+    <div
+      id="danhSachKhachHang"
+      style="margin-top:10px"
+    ></div>
+
+  </div>
+
+
+  <div class="card" id="duLieuBangKeToanCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangKeToanDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangKeToanNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+
+  <div class="action-row">
+
+    <button
+      class="btn-red"
+      onclick="dangXuat()"
+    >
+      ĐĂNG XUẤT
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     VẬN HÀNH
+========================================================= -->
+
+<section
+  id="vanHanhPage"
+  class="hidden"
+>
+
+  <div class="hero">
+
+    <div class="hero-row">
+
+      <div>
+
+        <div class="hero-title">
+          TRUNG TÂM VẬN HÀNH
+        </div>
+
+        <div
+          id="thongTinVanHanh"
+          class="hero-sub"
+        ></div>
+
+      </div>
+
+      <div class="hero-badge">
+        ĐIỀU PHỐI
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card" id="chonDiaDiemVanHanhBox" style="border:2px solid #f28c28;background:#fffaf5">
+    <div class="section-title">CHỌN ĐỊA ĐIỂM XUẤT PHIẾU</div>
+    <div class="section-note">Bắt buộc chọn nơi xuất phiếu trước khi mở giao diện tạo phiếu.</div>
+    <div class="chon-dia-diem-actions" style="margin-top:14px">
+      <button type="button" id="vanHanhVanGiang" class="btn-dia-diem btn-dia-diem-vg">
+        <span class="dia-diem-ma">VG</span>
+        <span class="dia-diem-text">
+          <b>VẬN HÀNH VĂN GIANG</b>
+          <small>Chọn để xuất phiếu tại Văn Giang</small>
+        </span>
+      </button>
+
+      <button type="button" id="vanHanhYenLenh" class="btn-dia-diem btn-dia-diem-yl">
+        <span class="dia-diem-ma">YL</span>
+        <span class="dia-diem-text">
+          <b>VẬN HÀNH YÊN LỆNH</b>
+          <small>Chọn để xuất phiếu tại Yên Lệnh</small>
+        </span>
+      </button>
+    </div>
+    <div id="chonDiaDiemStatus" class="meta" style="margin-top:10px">Chưa chọn địa điểm.</div>
+  </div>
+
+  <div class="card hidden" id="taoPhieuVanHanhCard">
+
+    <div class="section-title">
+      TẠO PHIẾU GIAO BÊ TÔNG
+    </div>
+
+    <div class="section-note">
+      Cấp phối Mẫu 2 được tra theo:
+      Đơn vị mua hàng + Dự án + Mác + Độ sụt.
+    </div>
+
+
+    <div
+      class="form-grid"
+      style="margin-top:14px"
+    >
+
+
+      <!-- ĐỊA ĐIỂM ĐÃ CHỌN -->
+      <div class="form-group full">
+        <input id="loaiVanHanh" type="hidden" value="">
+        <input id="diaDiemXuatPhieu" type="hidden" value="">
+        <div id="loaiVanHanhDaChon" class="message success" style="margin-top:0"></div>
+        <div id="loaiVanHanhStatus" class="meta" style="margin-top:8px">Vui lòng chọn địa điểm xuất phiếu.</div>
+      </div>
+
+      <!-- MẪU -->
+
+      <div class="form-group full">
+
+        <label class="form-label">
+          MẪU PHIẾU
+        </label>
+
+
+        <div class="template-grid">
+
+
+          <div
+            id="mau1"
+            class="template-option"
+            onclick="chonMau('1')"
+          >
+
+            <div class="template-number">
+              1
+            </div>
+
+            <b>
+              MẪU PHIẾU 1
+            </b>
+
+          </div>
+
+
+          <div
+            id="mau2"
+            class="template-option"
+            onclick="chonMau('2')"
+          >
+
+            <div class="template-number">
+              2
+            </div>
+
+            <b>
+              MẪU PHIẾU 2
+            </b>
+
+          </div>
+
+        </div>
+
+
+        <input
+          id="mauPhieu"
+          type="hidden"
+        >
+
+      </div>
+
+
+      <!-- KHÁCH HÀNG -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Đơn vị mua hàng
+        </label>
+
+        <select
+          id="khachHangSelect"
+        >
+
+          <option value="">
+            -- Chọn khách hàng --
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- DỰ ÁN -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Dự án
+        </label>
+
+        <select
+          id="congTrinh"
+        >
+
+          <option value="">
+            -- Chọn dự án --
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ĐỊA CHỈ -->
+
+      <div class="form-group full">
+
+        <label class="form-label">
+          Địa chỉ công trình
+        </label>
+
+        <input
+          id="diaChiCongTrinh"
+          readonly
+          placeholder="Tự động theo dự án"
+        >
+
+      </div>
+
+
+      <!-- KD -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          KD
+        </label>
+
+        <input
+          id="kd"
+          placeholder="Nhân viên kinh doanh"
+        >
+
+      </div>
+
+
+      <!-- MÁC -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Mác bê tông (KG/CM3)
+        </label>
+
+        <input
+          id="mac"
+          placeholder="Ví dụ: M300"
+        >
+
+      </div>
+
+
+      <!-- ĐỘ SỤT -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Độ sụt (CM)
+        </label>
+
+        <input
+          id="doSut"
+          placeholder="Ví dụ: 10"
+        >
+
+      </div>
+
+
+      <!-- SỐ LƯỢNG -->
+
+      <div class="form-group">
+
+        <label class="form-label">
+          Số lượng (m³)
+        </label>
+
+        <input
+          id="soLuong"
+          type="number"
+          min="0"
+          step="0.01"
+          placeholder="Nhập số lượng"
+        >
+
+      </div>
+
+
+      <!-- LŨY KẾ -->
+
+      <div class="form-group full">
+
+        <label class="form-label">
+          LŨY KẾ
+        </label>
+
+        <input
+          id="luyKe"
+          type="number"
+          readonly
+          min="0"
+          step="0.01"
+          placeholder="Tự động tính"
+        >
+
+      </div>
+
+
+      <!-- TÀI XẾ -->
+
+      <div class="form-group full">
+
+        <label class="form-label">
+          TÀI XẾ
+        </label>
+
+        <select
+          id="taiXeSelect"
+        >
+
+          <option value="">
+            -- Chọn tài xế --
+          </option>
+
+        </select>
+
+
+        <div
+          id="taiXeStatus"
+          class="meta"
+        ></div>
+
+      </div>
+
+      <div class="form-group full">
+        <label class="form-label">BIỂN SỐ XE</label>
+        <select id="bienSoXeSelect">
+          <option value="">-- Chọn biển số xe --</option>
+        </select>
+        <div id="bienSoXeStatus" class="meta"></div>
+      </div>
+
+    </div>
+
+
+    <!-- CAP PHOI -->
+
+    <div
+      id="capPhoiBox"
+      class="cap-box hidden"
+    >
+
+      <b>
+        CẤP PHỐI MẪU 2
+      </b>
+
+
+      <div
+        class="section-note"
+      >
+        Điều kiện:
+        Đơn vị mua hàng +
+        Dự án +
+        Mác +
+        Độ sụt
+      </div>
+
+
+      <div
+        id="capPhoiNote"
+        class="section-note"
+        style="margin-top:6px"
+      ></div>
+
+
+      <div
+        id="capPhoiGrid"
+        class="cap-grid"
+      ></div>
+
+    </div>
+
+
+    <div class="action-row">
+
+      <button
+        class="btn-orange"
+        onclick="taiTaiXe()"
+      >
+        🔄 CẬP NHẬT TÀI XẾ
+      </button>
+
+
+      <button
+        id="btnTaoPhieu"
+        class="btn-primary"
+        onclick="taoPhieu()"
+      >
+        ✓ LƯU PHIẾU
+      </button>
+
+    </div>
+
+
+    <div
+      id="phieuMessage"
+      class="message hidden"
+    ></div>
+
+
+    <div
+      id="preview"
+      class="hidden"
+      style="margin-top:16px"
+    ></div>
+
+
+    <div
+      id="nutInPhieu"
+      class="hidden"
+    >
+
+      <div class="action-row">
+
+        <button
+          class="btn-green"
+          onclick="inPhieu()"
+        >
+          🖨 IN PHIẾU
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card" id="duLieuBangVanHanhCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangVanHanhDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangVanHanhNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+
+  <div class="action-row">
+
+    <button
+      class="btn-red"
+      onclick="dangXuat()"
+    >
+      ĐĂNG XUẤT
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     TÀI XẾ
+========================================================= -->
+
+<section
+  id="taiXePage"
+  class="hidden"
+>
+
+  <div class="hero">
+
+    <div class="hero-row">
+
+      <div>
+
+        <div class="hero-title">
+          CỔNG TÀI XẾ
+        </div>
+
+        <div
+          id="thongTinTaiXe"
+          class="hero-sub"
+        ></div>
+
+      </div>
+
+      <div class="hero-badge">
+        TÀI XẾ
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- BẮT BUỘC CHỌN XE TRƯỚC KHI NHẬN PHIẾU -->
+  <div class="card" id="chonXeTaiXeBox" style="border:2px solid #f28c28;background:#fffaf5">
+    <div class="section-title">CHỌN BIỂN SỐ XE CỦA BẠN</div>
+    <div class="section-note">Tài xế có thể có nhiều biển số xe. Bạn bắt buộc phải chọn đúng xe trước khi xem và nhận phiếu.</div>
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">BIỂN SỐ XE</label>
+      <select id="taiXeBienSoSelect">
+        <option value="">-- Chọn biển số xe của bạn --</option>
+      </select>
+    </div>
+    <div id="taiXeBienSoMessage" class="meta" style="margin-top:8px"></div>
+    <div class="action-row">
+      <button id="btnXacNhanXe" class="btn-primary" onclick="xacNhanXeTaiXe()">XÁC NHẬN XE</button>
+    </div>
+  </div>
+
+
+  <!-- THỐNG KÊ -->
+
+  <div
+    id="taiXeNoiDungSauChonXe"
+    class="hidden"
+  >
+  <div
+    class="driver-stats"
+  >
+
+    <div
+      class="driver-stat driver-stat-total"
+    >
+
+      <div class="driver-stat-label">
+        TỔNG SỐ CHUYẾN
+      </div>
+
+      <div
+        id="tkTongDong"
+        class="driver-stat-number"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="driver-stat driver-stat-success"
+    >
+
+      <div class="driver-stat-label">
+        HOÀN THÀNH
+      </div>
+
+      <div
+        id="tkHoanThanh"
+        class="driver-stat-number"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="driver-stat driver-stat-fail"
+    >
+
+      <div class="driver-stat-label">
+        THẤT BẠI
+      </div>
+
+      <div
+        id="tkThatBai"
+        class="driver-stat-number"
+      >
+        0
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="section-title">
+      PHIẾU ĐANG XỬ LÝ
+    </div>
+
+
+    <div
+      id="danhSachPhieu"
+      style="margin-top:12px"
+    ></div>
+
+  </div>
+
+
+  </div>
+
+  <div class="card" id="duLieuBangTaiXeCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangTaiXeDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangTaiXeNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+  <div class="action-row">
+
+    <button
+      class="btn-red"
+      onclick="dangXuat()"
+    >
+      ĐĂNG XUẤT
+    </button>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<!-- =========================================================
+     PRINT
+========================================================= -->
+
+<div
+  id="printTemp"
+  class="print-only"
+></div>
+
+
+<script>
+
+
+// ============================================================
+// BIẾN
+// ============================================================
+
+let nguoiDung = null;
+
+let phieuMoi = null;
+
+let bienSoTaiXeDaChon = "";
+
+
+// ============================================================
+// DÙNG CHUNG
+// ============================================================
+
+function $(
+  id
+){
+
+  return document.getElementById(
+    id
+  );
+
+}
+
+
+function escapeHtml(
+  value
+){
+
+  return String(
+    value == null
+      ? ""
+      : value
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+function num(
+  value
+){
+
+  const n =
+    Number(value);
+
+
+  if (
+    !Number.isFinite(n)
+  ){
+
+    return "0";
+
+  }
+
+
+  return n.toLocaleString(
+    "vi-VN",
+    {
+      maximumFractionDigits: 2
+    }
+  );
+
+}
+
+
+function showMsg(
+  el,
+  text,
+  success
+){
+
+  el.textContent =
+    text;
+
+  el.className =
+    "message " +
+    (
+      success
+        ? "success"
+        : "error"
+    );
+
+}
+
+
+function hienTrang(
+  id
+){
+
+  [
+    "loginPage",
+    "adminPage",
+    "keToanPage",
+    "vanHanhPage",
+    "taiXePage"
+  ]
+  .forEach(
+    function(x){
+
+      $(x)
+        .classList
+        .add(
+          "hidden"
+        );
+
+    }
+  );
+
+
+  $(id)
+    .classList
+    .remove(
+      "hidden"
+    );
+
+
+  $("topbar")
+    .classList
+    .toggle(
+      "hidden",
+      id === "loginPage"
+    );
+
+}
+
+
+// ============================================================
+// ĐĂNG NHẬP
+// ============================================================
+
+function dangNhap(){
+
+  const ma =
+    $("maDangNhap")
+      .value
+      .trim();
+
+  const mk =
+    $("matKhau")
+      .value
+      .trim();
+
+
+  if (
+    !ma ||
+    !mk
+  ){
+
+    showMsg(
+      $("loginMessage"),
+      "Vui lòng nhập tài khoản và mật khẩu.",
+      false
+    );
+
+    return;
+
+  }
+
+
+  $("btnLogin")
+    .disabled =
+    true;
+
+
+  $("btnLogin")
+    .textContent =
+    "ĐANG ĐĂNG NHẬP...";
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        $("btnLogin")
+          .disabled =
+          false;
+
+
+        $("btnLogin")
+          .textContent =
+          "ĐĂNG NHẬP";
+
+
+        if (
+          !r ||
+          !r.success
+        ){
+
+          showMsg(
+            $("loginMessage"),
+            r?.message ||
+              "Đăng nhập thất bại.",
+            false
+          );
+
+          return;
+
+        }
+
+
+        nguoiDung =
+          r;
+
+
+        if (r.vaiTro === "Admin") {
+          moAdmin();
+        }
+        else if (r.vaiTro === "Kế toán") {
+
+          moKeToan();
+
+        }
+        else if (r.vaiTro === "Vận hành"){
+
+          moVanHanh();
+
+        }
+        else{
+
+          moTaiXe();
+
+        }
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e){
+
+        $("btnLogin")
+          .disabled =
+          false;
+
+        $("btnLogin")
+          .textContent =
+          "ĐĂNG NHẬP";
+
+        showMsg(
+          $("loginMessage"),
+          e.message,
+          false
+        );
+
+      }
+    )
+
+    .dangNhap(
+      ma,
+      mk
+    );
+
+}
+
+
+
+// ============================================================
+// ADMIN - PHÂN QUYỀN
+// ============================================================
+function moAdmin(){
+  hienTrang("adminPage");
+  $("thongTinAdmin").innerHTML = "Xin chào <b>" + escapeHtml(nguoiDung.hoTen || nguoiDung.ma || "") + "</b> · Mã " + escapeHtml(nguoiDung.ma || "");
+  adminTaiDanhSach();
+  taiDuLieuBangDuocCap("duLieuBangAdmin");
+}
+
+let adminQuyenRows = [];
+let adminDanhSachSheet = [];
+function adminTaiDanhSach(){
+  google.script.run.withSuccessHandler(function(r){
+    if(!r || !r.success){ showMsg($("adminMessage"), r?.message || "Không tải được danh sách tài khoản.", false); return; }
+    adminQuyenRows = r.rows || [];
+    adminDanhSachSheet = r.danhSachSheet || [];
+    const sel=$("adminTaiKhoanSelect");
+    sel.innerHTML='';
+    adminQuyenRows.forEach(function(x){ const o=document.createElement("option"); o.value=x.ma; o.textContent=x.ma+" · "+x.ten+" · "+x.vaiTro; sel.appendChild(o); });
+    adminChonTaiKhoan();
+    const box=$("adminDanhSachQuyen");
+    box.innerHTML=adminQuyenRows.map(function(x){
+      const ds = (x.sheets && x.sheets.length) ? escapeHtml(x.sheets.join(", ")) : "Chưa cấp quyền xem sheet nào";
+      return '<div class="list-row"><div><b>'+escapeHtml(x.ma)+' · '+escapeHtml(x.ten)+'</b><div class="meta">'+escapeHtml(x.vaiTro)+' · '+ds+'</div></div></div>';
+    }).join("") || '<div class="empty">Chưa có tài khoản.</div>';
+  }).withFailureHandler(function(e){showMsg($("adminMessage"),e.message,false);}).layDanhSachTaiKhoanAdmin(nguoiDung.ma);
+}
+function adminChonTaiKhoan(){
+  const ma=$("adminTaiKhoanSelect").value;
+  const x=adminQuyenRows.find(function(a){return a.ma===ma;}); if(!x)return;
+  $("adminVaiTro").value=x.vaiTro||"";
+  const daChon = x.sheets || [];
+  const box=$("adminSheetCheckboxes");
+  box.innerHTML = adminDanhSachSheet.map(function(ten){
+    const checked = daChon.indexOf(ten) >= 0 ? "checked" : "";
+    return '<label><input type="checkbox" class="admin-sheet-cb" value="'+escapeHtml(ten)+'" '+checked+'> '+escapeHtml(ten)+'</label>';
+  }).join("") || '<div class="empty">Không tìm thấy sheet nào trong Google Sheet.</div>';
+}
+function adminLuuQuyen(){
+  const ma=$("adminTaiKhoanSelect").value; if(!ma)return;
+  const sheets = Array.from(document.querySelectorAll(".admin-sheet-cb:checked")).map(function(cb){ return cb.value; });
+  const payload={ma:ma,sheets:sheets};
+  google.script.run.withSuccessHandler(function(r){showMsg($("adminMessage"),r.message,!!r.success);if(r.success) adminTaiDanhSach();}).withFailureHandler(function(e){showMsg($("adminMessage"),e.message,false);}).luuQuyenAdmin(nguoiDung.ma,payload);
+}
+
+// ============================================================
+// DỮ LIỆU BẢNG (CHỈ XEM) - DÙNG CHUNG CHO MỌI VAI TRÒ ĐƯỢC CẤP QUYỀN
+// ============================================================
+
+function taiDuLieuBangDuocCap(idPrefix){
+  const listBox = $(idPrefix + "DanhSach");
+  const contentBox = $(idPrefix + "NoiDung");
+  if (!listBox || !contentBox) return;
+  contentBox.innerHTML = "";
+  listBox.innerHTML = '<div class="meta">Đang tải danh sách...</div>';
+
+  google.script.run.withSuccessHandler(function(list){
+    nguoiDung.sheetDuocXem = list || [];
+    if (!list || !list.length) {
+      listBox.innerHTML = '<div class="empty">Bạn chưa được cấp quyền xem sheet nào.</div>';
+      return;
+    }
+    listBox.innerHTML = "";
+    list.forEach(function(ten){
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn-primary";
+      btn.style.marginRight = "8px";
+      btn.style.marginBottom = "8px";
+      btn.textContent = ten;
+      btn.onclick = function(){ xemDuLieuBang(idPrefix, ten); };
+      listBox.appendChild(btn);
+    });
+  }).withFailureHandler(function(e){
+    listBox.innerHTML = '<div class="message error">' + escapeHtml(e.message) + '</div>';
+  }).layDanhSachSheetDuocCap(nguoiDung.ma);
+}
+
+function xemDuLieuBang(idPrefix, tenSheet){
+  const contentBox = $(idPrefix + "NoiDung");
+  if (!contentBox) return;
+  contentBox.innerHTML = '<div class="meta">Đang tải dữ liệu ' + escapeHtml(tenSheet) + '...</div>';
+
+  google.script.run.withSuccessHandler(function(r){
+    if (!r || !r.success) {
+      contentBox.innerHTML = '<div class="message error">' + escapeHtml((r && r.message) || "Không tải được dữ liệu.") + '</div>';
+      return;
+    }
+    if (!r.rows || !r.rows.length) {
+      contentBox.innerHTML = '<div class="section-note">Sheet <b>' + escapeHtml(tenSheet) + '</b> chưa có dữ liệu.</div>';
+      return;
+    }
+    let html = '<div class="section-note">Sheet <b>' + escapeHtml(tenSheet) + '</b> · ' + r.rows.length + ' dòng · chỉ xem, không sửa được.</div>';
+    html += '<table style="margin-top:8px;width:100%;border-collapse:collapse;font-size:12px">';
+    html += '<tr>' + r.headers.map(function(h){
+      return '<th style="border:1px solid #d0d5dd;padding:6px;background:#f8fafc;text-align:left;white-space:nowrap">' + escapeHtml(h) + '</th>';
+    }).join('') + '</tr>';
+    r.rows.forEach(function(row){
+      html += '<tr>' + row.map(function(v){
+        return '<td style="border:1px solid #e3e8ef;padding:6px;white-space:nowrap">' + escapeHtml(v) + '</td>';
+      }).join('') + '</tr>';
+    });
+    html += '</table>';
+    contentBox.innerHTML = html;
+  }).withFailureHandler(function(e){
+    contentBox.innerHTML = '<div class="message error">' + escapeHtml(e.message) + '</div>';
+  }).layDuLieuBang(nguoiDung.ma, tenSheet);
+}
+
+// ============================================================
+// KẾ TOÁN
+// ============================================================
+
+function moKeToan(){
+
+  hienTrang(
+    "keToanPage"
+  );
+
+
+  $("thongTinKeToan")
+    .innerHTML =
+      "Xin chào <b>" +
+      escapeHtml(
+        nguoiDung.hoTen
+      ) +
+      "</b> · Mã " +
+      escapeHtml(
+        nguoiDung.ma
+      );
+
+
+  taiKhachHangKeToan();
+
+  taiDuAnKeToan();
+
+  taiDuLieuBangDuocCap("duLieuBangKeToan");
+
+}
+
+
+function taiKhachHangKeToan(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const box =
+          $("danhSachKhachHang");
+
+
+        const select =
+          $("khachHangSelect");
+
+
+        const selectDuAn =
+          $("khongCo");
+
+
+        if (select){
+
+          // Không làm gì ở đây,
+          // phần này được tải riêng.
+
+        }
+
+
+        box.innerHTML =
+          "";
+
+
+        (
+          list || []
+        )
+
+        .forEach(
+          function(x){
+
+            const div =
+              document.createElement(
+                "div"
+              );
+
+
+            div.className =
+              "list-row";
+
+
+            div.innerHTML =
+
+              "<div>" +
+
+                "<b>" +
+                  escapeHtml(
+                    x.ten
+                  ) +
+                "</b>" +
+
+                '<div class="meta">' +
+                  escapeHtml(
+                    x.id
+                  ) +
+                  " · " +
+                  escapeHtml(
+                    x.diaChi
+                  ) +
+                "</div>" +
+
+              "</div>";
+
+
+            const button =
+              document.createElement(
+                "button"
+              );
+
+
+            button.className =
+              "btn-red";
+
+            button.textContent =
+              "XÓA";
+
+
+            button.onclick =
+              function(){
+
+                xoaKhachHang(
+                  x.id
+                );
+
+              };
+
+
+            div.appendChild(
+              button
+            );
+
+
+            box.appendChild(
+              div
+            );
+
+          }
+        );
+
+      }
+    )
+
+    .layKhachHang(nguoiDung.ma);
+
+}
+
+
+function themKhachHang(){
+
+  const ten =
+    $("tenKhachHang")
+      .value
+      .trim();
+
+  const dc =
+    $("diaChiKhachHang")
+      .value
+      .trim();
+
+
+  if (!ten){
+
+    showMsg(
+      $("khachHangMessage"),
+      "Vui lòng nhập tên khách hàng.",
+      false
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        showMsg(
+          $("khachHangMessage"),
+          r.message,
+          !!r.success
+        );
+
+
+        if (
+          r.success
+        ){
+
+          $("tenKhachHang")
+            .value =
+            "";
+
+          $("diaChiKhachHang")
+            .value =
+            "";
+
+
+          taiKhachHangKeToan();
+
+        }
+
+      }
+    )
+
+    .themKhachHang(
+      nguoiDung.ma,
+      ten,
+      dc
+    );
+
+}
+
+
+function xoaKhachHang(
+  id
+){
+
+  if (
+    !confirm(
+      "Bạn có chắc muốn xóa khách hàng này?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        alert(
+          r.message
+        );
+
+
+        if (
+          r.success
+        ){
+
+          taiKhachHangKeToan();
+
+        }
+
+      }
+    )
+
+    .xoaKhachHang(
+      nguoiDung.ma,
+      id
+    );
+
+}
+
+
+// ============================================================
+// DỰ ÁN KẾ TOÁN
+// ============================================================
+
+function themDuAn(){
+
+  const ten =
+    $("tenDuAn")
+      .value
+      .trim();
+
+  const dc =
+    $("diaChiDuAn")
+      .value
+      .trim();
+
+
+  if (!ten){
+
+    showMsg(
+      $("duAnMessage"),
+      "Vui lòng nhập tên dự án.",
+      false
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        showMsg(
+          $("duAnMessage"),
+          r.message,
+          !!r.success
+        );
+
+
+        if (
+          r.success
+        ){
+
+          $("tenDuAn")
+            .value =
+            "";
+
+          $("diaChiDuAn")
+            .value =
+            "";
+
+          taiDuAnKeToan();
+
+        }
+
+      }
+    )
+
+    .themDuAn(
+      nguoiDung.ma,
+      ten,
+      dc
+    );
+
+}
+
+
+function taiDuAnKeToan(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const box =
+          $("danhSachDuAn");
+
+
+        box.innerHTML =
+          "";
+
+
+        (
+          list || []
+        )
+        .forEach(
+          function(x){
+
+            const div =
+              document.createElement(
+                "div"
+              );
+
+
+            div.className =
+              "project-row";
+
+
+            div.innerHTML =
+
+              "<div>" +
+
+                "<b>" +
+                  escapeHtml(
+                    x.ten
+                  ) +
+                "</b>" +
+
+                '<div class="meta">' +
+
+                  escapeHtml(
+                    x.id
+                  ) +
+
+                  " · " +
+
+                  escapeHtml(
+                    x.diaChi
+                  ) +
+
+                "</div>" +
+
+              "</div>";
+
+
+            const button =
+              document.createElement(
+                "button"
+              );
+
+
+            button.className =
+              "btn-red";
+
+            button.textContent =
+              "XÓA";
+
+
+            button.onclick =
+              function(){
+
+                xoaDuAn(
+                  x.id
+                );
+
+              };
+
+
+            div.appendChild(
+              button
+            );
+
+
+            box.appendChild(
+              div
+            );
+
+          }
+        );
+
+
+        if (
+          !list ||
+          !list.length
+        ){
+
+          box.innerHTML =
+            '<div class="empty">' +
+              "Chưa có dự án." +
+            "</div>";
+
+        }
+
+
+        taiDuAnVanHanh();
+
+      }
+    )
+
+    .layDuAn(nguoiDung.ma);
+
+}
+
+
+function xoaDuAn(
+  id
+){
+
+  if (
+    !confirm(
+      "Bạn có chắc muốn xóa dự án này?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        alert(
+          r.message
+        );
+
+
+        if (
+          r.success
+        ){
+
+          taiDuAnKeToan();
+
+        }
+
+      }
+    )
+
+    .xoaDuAn(
+      nguoiDung.ma,
+      id
+    );
+
+}
+
+
+// ============================================================
+// VẬN HÀNH
+// ============================================================
+
+function moVanHanh(){
+
+  hienTrang(
+    "vanHanhPage"
+  );
+
+  $("thongTinVanHanh").innerHTML =
+    "Xin chào <b>" +
+    escapeHtml(nguoiDung.hoTen || nguoiDung.ma || "") +
+    "</b>";
+
+  // Bắt buộc chọn địa điểm trước khi mở form tạo phiếu.
+  $("loaiVanHanh").value = "";
+  $("diaDiemXuatPhieu").value = "";
+  $("chonDiaDiemStatus").textContent = "Chưa chọn địa điểm.";
+  $("loaiVanHanhStatus").textContent = "Vui lòng chọn địa điểm xuất phiếu trước khi tạo phiếu.";
+  $("chonDiaDiemVanHanhBox").classList.remove("hidden");
+  $("taoPhieuVanHanhCard").classList.add("hidden");
+
+  // Vẫn tải các danh sách cần cho phần vận hành, giữ nguyên chức năng cũ.
+  taiKhachHangVanHanh();
+  taiDuAnVanHanh();
+  taiTaiXe();
+  taiDuLieuBangDuocCap("duLieuBangVanHanh");
+
+}
+
+function taiKhachHangVanHanh(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const select =
+          $("khachHangSelect");
+
+
+        select.innerHTML =
+          '<option value="">-- Chọn khách hàng --</option>';
+
+
+        (
+          list || []
+        )
+        .forEach(
+          function(x){
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+
+            option.value =
+              x.ten;
+
+            option.textContent =
+              x.ten;
+
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+      }
+    )
+
+    .layKhachHang(nguoiDung.ma);
+
+}
+
+
+function taiDuAnVanHanh(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const select =
+          $("congTrinh");
+
+
+        select.innerHTML =
+          '<option value="">-- Chọn dự án --</option>';
+
+
+        (
+          list || []
+        )
+        .forEach(
+          function(x){
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+
+            option.value =
+              x.ten;
+
+            option.textContent =
+              x.ten;
+
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+
+        $("diaChiCongTrinh")
+          .value =
+          "";
+
+      }
+    )
+
+    .layDuAn(nguoiDung.ma);
+
+}
+
+
+function taiThongTinDuAn(){
+
+  const duAn =
+    $("congTrinh")
+      .value
+      .trim();
+
+
+  if (!duAn){
+
+    $("diaChiCongTrinh")
+      .value =
+      "";
+
+    taiCapPhoi();
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        $("diaChiCongTrinh")
+          .value =
+          r?.diaChi ||
+          "";
+
+      }
+    )
+
+    .layThongTinDuAn(
+      duAn
+    );
+
+
+  taiCapPhoi();
+
+}
+
+
+// ============================================================
+// MẪU
+// ============================================================
+
+function chonMau(
+  mau
+){
+
+  $("mauPhieu")
+    .value =
+    mau;
+
+
+  $("mau1")
+    .classList
+    .toggle(
+      "active",
+      mau === "1"
+    );
+
+
+  $("mau2")
+    .classList
+    .toggle(
+      "active",
+      mau === "2"
+    );
+
+
+  taiCapPhoi();
+
+}
+
+
+// ============================================================
+// QUAN TRỌNG
+// MỖI KHI ĐỔI KHÁCH / DỰ ÁN / MÁC / ĐỘ SỤT
+// SẼ TRA LẠI CAP_PHOI
+// ============================================================
+
+function taiCapPhoi(){
+
+  const mau =
+    $("mauPhieu")
+      .value;
+
+  const kh =
+    $("khachHangSelect")
+      .value
+      .trim();
+
+  const du =
+    $("congTrinh")
+      .value
+      .trim();
+
+  const mac =
+    $("mac")
+      .value
+      .trim();
+
+  const doSut =
+    $("doSut")
+      .value
+      .trim();
+
+
+  const box =
+    $("capPhoiBox");
+
+
+  if (
+    mau !== "2"
+  ){
+
+    box.classList
+      .add(
+        "hidden"
+      );
+
+    return;
+
+  }
+
+
+  box.classList
+    .remove(
+      "hidden"
+    );
+
+
+  if (
+    !kh ||
+    !du ||
+    !mac ||
+    !doSut
+  ){
+
+    $("capPhoiNote")
+      .textContent =
+        "Chọn đầy đủ Đơn vị mua hàng, Dự án, Mác và Độ sụt.";
+
+    $("capPhoiGrid")
+      .innerHTML =
+      "";
+
+    return;
+
+  }
+
+
+  $("capPhoiNote")
+    .textContent =
+    "Đang tải cấp phối...";
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        const names = {
+
+          cat1:
+            "CÁT 1",
+
+          da1:
+            "ĐÁ 1",
+
+          da2:
+            "ĐÁ 2",
+
+          cat2:
+            "CÁT 2",
+
+          xiMang1:
+            "XI MĂNG 1",
+
+          xiMang2:
+            "XI MĂNG 2",
+
+          nuoc:
+            "NƯỚC",
+
+          pg1:
+            "PG1",
+
+          pg2:
+            "PG2"
+
+        };
+
+
+        const grid =
+          $("capPhoiGrid");
+
+
+        grid.innerHTML =
+          "";
+
+
+        Object.keys(
+          names
+        )
+        .forEach(
+          function(k){
+
+            const div =
+              document.createElement(
+                "div"
+              );
+
+
+            div.className =
+              "cap-item";
+
+
+            div.innerHTML =
+
+              '<div class="cap-name">' +
+                names[k] +
+              "</div>" +
+
+              '<div class="cap-value">' +
+
+                escapeHtml(
+                  r?.values?.[k] ??
+                  ""
+                ) +
+
+              "</div>";
+
+
+            grid.appendChild(
+              div
+            );
+
+          }
+        );
+
+
+        $("capPhoiNote")
+          .textContent =
+            r?.found
+
+              ?
+
+              "✓ Đã tìm thấy cấp phối phù hợp."
+
+              :
+
+              "Không tìm thấy cấp phối theo 4 điều kiện.";
+
+      }
+    )
+
+    // QUAN TRỌNG:
+    // TRUYỀN ĐỦ 4 GIÁ TRỊ
+
+    .layCapPhoi(
+      kh,
+      du,
+      mac,
+      doSut
+    );
+
+}
+
+
+// ============================================================
+// TỰ ĐỘNG TRA CẤP PHỐI KHI NHẬP MÁC
+// ============================================================
+
+$("mac")
+  .addEventListener(
+    "input",
+    taiCapPhoi
+  );
+
+
+// ============================================================
+// TỰ ĐỘNG TRA CẤP PHỐI KHI NHẬP ĐỘ SỤT
+// ============================================================
+
+$("doSut")
+  .addEventListener(
+    "input",
+    taiCapPhoi
+  );
+
+
+// ============================================================
+// KHÁCH HÀNG ĐỔI
+// ============================================================
+
+$("khachHangSelect")
+  .addEventListener(
+    "change",
+    function(){
+
+      taiCapPhoi();
+
+    }
+  );
+
+
+// ============================================================
+// DỰ ÁN ĐỔI
+// ============================================================
+
+$("congTrinh")
+  .addEventListener(
+    "change",
+    taiThongTinDuAn
+  );
+
+
+// ============================================================
+// TÀI XẾ
+// ============================================================
+
+function taiTaiXe(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const select =
+          $("taiXeSelect");
+
+
+        select.innerHTML =
+          '<option value="">-- Chọn tài xế --</option>';
+
+
+        (
+          list || []
+        )
+        .forEach(
+          function(x){
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+
+            option.value =
+              x.ma;
+
+
+            option.disabled =
+              !!x.dangCoPhieu;
+
+
+            option.textContent =
+
+              (
+                x.dangCoPhieu
+                  ? "⛔ "
+                  : ""
+              )
+
+              +
+
+              x.ma
+
+              +
+
+              " - "
+
+              +
+
+              x.hoTen
+
+              +
+
+              (
+                x.dangCoPhieu
+                  ? " - ĐANG CÓ PHIẾU"
+                  : ""
+              );
+
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+
+        $("taiXeStatus")
+          .textContent =
+            "Danh sách tài xế đã được sắp xếp.";
+
+      }
+    )
+
+    .layDanhSachTaiXe(nguoiDung.ma);
+
+}
+
+
+// ============================================================
+// CHỌN TÀI XẾ -> CHỌN BIỂN SỐ XE
+// ============================================================
+
+function taiBienSoTheoTaiXeVanHanh(){
+  const ma = $("taiXeSelect").value.trim();
+  const select = $("bienSoXeSelect");
+  select.innerHTML = '<option value="">-- Chọn biển số xe --</option>';
+  if (!ma) return;
+  google.script.run.withSuccessHandler(function(list){
+    (list || []).forEach(function(bs){
+      const o=document.createElement("option");
+      o.value=bs; o.textContent=bs; select.appendChild(o);
+    });
+    $("bienSoXeStatus").textContent = list && list.length ? "Đã tải các xe của tài xế." : "Tài xế chưa có biển số xe hoạt động.";
+  }).withFailureHandler(function(e){
+    $("bienSoXeStatus").textContent = e.message || "Không tải được biển số xe.";
+  }).layBienSoTheoTaiXe(ma);
+}
+
+function chonLoaiVanHanh(loai,diaDiem){
+  const loaiEl = $("loaiVanHanh");
+  const diaDiemEl = $("diaDiemXuatPhieu");
+  const statusEl = $("loaiVanHanhStatus");
+  const chonStatusEl = $("chonDiaDiemStatus");
+  const gateEl = $("chonDiaDiemVanHanhBox");
+  const formEl = $("taoPhieuVanHanhCard");
+
+  if (loaiEl) loaiEl.value = loai;
+  if (diaDiemEl) diaDiemEl.value = diaDiem;
+  if (statusEl) statusEl.textContent = "Đã chọn: " + loai + " — " + diaDiem;
+  if (chonStatusEl) chonStatusEl.textContent = "✓ Đã chọn: " + loai + " — " + diaDiem;
+  if ($("loaiVanHanhDaChon")) {
+    $("loaiVanHanhDaChon").textContent = "Địa điểm xuất phiếu: " + diaDiem + " · " + loai;
+  }
+
+  if ($("vanHanhVanGiang")) {
+    $("vanHanhVanGiang").classList.toggle("active", loai === "Vận hành Văn Giang");
+  }
+  if ($("vanHanhYenLenh")) {
+    $("vanHanhYenLenh").classList.toggle("active", loai === "Vận hành Yên Lệnh");
+  }
+
+  // Sau khi chọn địa điểm: ẩn màn hình chọn và mở ngay giao diện tạo phiếu.
+  if (gateEl) gateEl.classList.add("hidden");
+  if (formEl) {
+    formEl.classList.remove("hidden");
+    formEl.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
+
+(function(){
+  const tx=$("taiXeSelect");
+  if(tx) tx.addEventListener("change", taiBienSoTheoTaiXeVanHanh);
+
+  const btnVG=$("vanHanhVanGiang");
+  const btnYL=$("vanHanhYenLenh");
+
+  if(btnVG){
+    btnVG.addEventListener("click", function(){
+      chonLoaiVanHanh("Vận hành Văn Giang","Văn Giang");
+    });
+  }
+
+  if(btnYL){
+    btnYL.addEventListener("click", function(){
+      chonLoaiVanHanh("Vận hành Yên Lệnh","Yên Lệnh");
+    });
+  }
+})();
+
+// ============================================================
+// TẠO PHIẾU
+// ============================================================
+
+function taoPhieu(){
+
+  const form = {
+
+    mauPhieu:
+      $("mauPhieu")
+        .value
+        .trim(),
+
+    khachHang:
+      $("khachHangSelect")
+        .value
+        .trim(),
+
+    congTrinh:
+      $("congTrinh")
+        .value
+        .trim(),
+
+    kd:
+      $("kd")
+        .value
+        .trim(),
+
+    mac:
+      $("mac")
+        .value
+        .trim(),
+
+    doSut:
+      $("doSut")
+        .value
+        .trim(),
+
+    soLuong:
+      $("soLuong")
+        .value,
+
+    luyKe:
+      $("luyKe")
+        .value,
+
+    maTaiXe:
+      $("taiXeSelect")
+        .value
+        .trim(),
+
+    bienSo:
+      $("bienSoXeSelect")
+        .value
+        .trim(),
+
+    maNguoiVanHanh:
+      nguoiDung && nguoiDung.vaiTro === "Vận hành"
+        ? String(nguoiDung.ma || "").trim()
+        : "",
+
+    loaiVanHanh:
+      $("loaiVanHanh")
+        .value
+        .trim(),
+
+    diaDiemXuatPhieu:
+      $("diaDiemXuatPhieu")
+        .value
+        .trim()
+
+  };
+
+
+  if (!form.loaiVanHanh || !form.diaDiemXuatPhieu) {
+    showMsg($("phieuMessage"), "Vui lòng chọn địa điểm xuất phiếu trước.", false);
+    $("chonDiaDiemVanHanhBox").classList.remove("hidden");
+    $("taoPhieuVanHanhCard").classList.add("hidden");
+    return;
+  }
+
+  if (
+    !form.mauPhieu ||
+    !form.khachHang ||
+    !form.congTrinh ||
+    !form.mac ||
+    !form.doSut ||
+    Number(form.soLuong) <= 0 ||
+    !form.maTaiXe ||
+    !form.bienSo ||
+    !form.loaiVanHanh ||
+    !form.diaDiemXuatPhieu
+  ){
+
+    showMsg(
+      $("phieuMessage"),
+      "Vui lòng nhập đầy đủ dữ liệu.",
+      false
+    );
+
+    return;
+
+  }
+
+
+  // Nếu là Mẫu 2,
+  // kiểm tra cấp phối trước khi lưu.
+
+  if (
+    form.mauPhieu ===
+    "2"
+  ){
+
+    google.script.run
+
+      .withSuccessHandler(
+        function(cap){
+
+          luuPhieuSauKhiKiemTraCapPhoi(
+            form,
+            cap
+          );
+
+        }
+      )
+
+      .withFailureHandler(
+        function(e){
+
+          showMsg(
+            $("phieuMessage"),
+            e.message,
+            false
+          );
+
+        }
+      )
+
+      .layCapPhoi(
+        form.khachHang,
+        form.congTrinh,
+        form.mac,
+        form.doSut
+      );
+
+    return;
+
+  }
+
+
+  luuPhieuSauKhiKiemTraCapPhoi(
+    form,
+    null
+  );
+
+}
+
+
+// ============================================================
+// LƯU PHIẾU
+// ============================================================
+
+function luuPhieuSauKhiKiemTraCapPhoi(
+  form,
+  cap
+){
+
+  $("btnTaoPhieu")
+    .disabled =
+    true;
+
+
+  $("btnTaoPhieu")
+    .textContent =
+    "ĐANG LƯU...";
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        $("btnTaoPhieu")
+          .disabled =
+          false;
+
+
+        $("btnTaoPhieu")
+          .textContent =
+          "✓ LƯU PHIẾU";
+
+
+        if (
+          !r ||
+          !r.success
+        ){
+
+          showMsg(
+            $("phieuMessage"),
+            r?.message ||
+              "Lỗi tạo phiếu.",
+            false
+          );
+
+          return;
+
+        }
+
+
+        phieuMoi =
+          r;
+
+
+        showMsg(
+          $("phieuMessage"),
+          "✓ " +
+          r.message +
+          " · " +
+          r.maPhieu +
+          " · Mẫu " +
+          r.mauPhieu +
+          " · " + r.bienSo +
+          " · " + r.diaDiemXuatPhieu,
+          true
+        );
+
+
+        $("nutInPhieu")
+          .classList
+          .remove(
+            "hidden"
+          );
+
+
+        $("preview")
+          .classList
+          .remove(
+            "hidden"
+          );
+
+
+        $("preview")
+          .innerHTML =
+
+            '<div class="ticket">' +
+
+              '<div class="ticket-head">' +
+
+                '<div class="ticket-title">' +
+                  "Phiếu " +
+                  escapeHtml(
+                    r.maPhieu
+                  ) +
+                "</div>" +
+
+                '<div class="badge">' +
+                  "Mẫu " +
+                  escapeHtml(
+                    r.mauPhieu
+                  ) +
+                "</div>" +
+
+              "</div>" +
+
+              '<div class="meta">' +
+
+                escapeHtml(
+                  r.khachHang
+                ) +
+
+                " · " +
+
+                escapeHtml(
+                  r.congTrinh
+                ) +
+
+              "</div>" +
+
+              '<div class="meta">' +
+
+                escapeHtml(
+                  r.mac
+                ) +
+
+                " · Độ sụt " +
+
+                escapeHtml(
+                  r.doSut
+                ) +
+
+                " · " +
+
+                num(
+                  r.soLuong
+                ) +
+
+                " m³" +
+
+              "</div>" +
+
+              '<div class="meta">' +
+
+                "Cấp phối: " +
+
+                (
+                  r.capPhoiFound
+                    ? "ĐÃ TÌM THẤY"
+                    : "KHÔNG CÓ"
+                ) +
+
+              "</div>" +
+
+            "</div>";
+
+
+        // Không xóa dữ liệu khách/dự án
+        // vì có thể cần tạo phiếu tiếp.
+
+        $("kd")
+          .value =
+          "";
+
+        $("mac")
+          .value =
+          "";
+
+        $("doSut")
+          .value =
+          "";
+
+        $("soLuong")
+          .value =
+          "";
+
+        $("luyKe")
+          .value =
+          "";
+
+        $("taiXeSelect")
+          .value =
+          "";
+
+
+        taiTaiXe();
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e){
+
+        $("btnTaoPhieu")
+          .disabled =
+          false;
+
+
+        $("btnTaoPhieu")
+          .textContent =
+          "✓ LƯU PHIẾU";
+
+
+        showMsg(
+          $("phieuMessage"),
+          e.message,
+          false
+        );
+
+      }
+    )
+
+    .taoPhieu(
+      form
+    );
+
+}
+
+
+// ============================================================
+// TÀI XẾ
+// ============================================================
+
+function moTaiXe(){
+
+  hienTrang(
+    "taiXePage"
+  );
+
+  bienSoTaiXeDaChon = "";
+
+  $("thongTinTaiXe").innerHTML =
+    "Xin chào <b>" +
+    escapeHtml(nguoiDung.hoTen) +
+    "</b> · Mã " +
+    escapeHtml(nguoiDung.maTaiXe);
+
+  const select = $("taiXeBienSoSelect");
+  select.innerHTML = '<option value="">-- Chọn biển số xe của bạn --</option>';
+  const list = nguoiDung.bienSoList || [];
+  list.forEach(function(bs){
+    const o=document.createElement("option");
+    o.value=bs;
+    o.textContent=bs;
+    select.appendChild(o);
+  });
+  $("taiXeBienSoMessage").textContent = list.length
+    ? "Vui lòng chọn đúng xe đang sử dụng rồi bấm XÁC NHẬN XE."
+    : "Tài xế chưa có biển số xe đang hoạt động.";
+
+  $("taiXeNoiDungSauChonXe").classList.add("hidden");
+  $("chonXeTaiXeBox").classList.remove("hidden");
+
+  taiDuLieuBangDuocCap("duLieuBangTaiXe");
+
+}
+
+function xacNhanXeTaiXe(){
+  const bs = $("taiXeBienSoSelect").value.trim();
+  if (!bs) {
+    $("taiXeBienSoMessage").textContent = "Bắt buộc chọn biển số xe trước khi nhận phiếu.";
+    return;
+  }
+
+  const btn=$("btnXacNhanXe");
+  btn.disabled=true;
+  btn.textContent="ĐANG KIỂM TRA...";
+
+  google.script.run.withSuccessHandler(function(ok){
+    btn.disabled=false;
+    btn.textContent="XÁC NHẬN XE";
+    if (!ok) {
+      $("taiXeBienSoMessage").textContent="Biển số xe không thuộc tài xế hoặc xe không hoạt động.";
+      return;
+    }
+    bienSoTaiXeDaChon=bs;
+    nguoiDung.bienSo=bs;
+    $("thongTinTaiXe").innerHTML =
+      "Xin chào <b>" + escapeHtml(nguoiDung.hoTen) +
+      "</b> · Mã " + escapeHtml(nguoiDung.maTaiXe) +
+      " · <b>Xe " + escapeHtml(bs) + "</b>";
+    $("taiXeBienSoMessage").textContent="✓ Đã xác nhận xe " + bs + ".";
+    $("taiXeNoiDungSauChonXe").classList.remove("hidden");
+    taiThongKeTaiXe();
+    taiPhieu();
+  }).withFailureHandler(function(e){
+    btn.disabled=false;
+    btn.textContent="XÁC NHẬN XE";
+    $("taiXeBienSoMessage").textContent=e.message || "Không kiểm tra được biển số xe.";
+  }).kiemTraBienSoTaiXe(nguoiDung.maTaiXe,bs);
+}
+
+
+function taiThongKeTaiXe(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(r){
+
+        $("tkTongDong")
+          .textContent =
+          r?.tongChuyen ??
+          r?.tongDong ??
+          0;
+
+
+        $("tkHoanThanh")
+          .textContent =
+          r?.tongHoanThanh ||
+          0;
+
+
+        $("tkThatBai")
+          .textContent =
+          r?.tongThatBai ||
+          0;
+
+      }
+    )
+
+    .layThongKeTaiXe(
+      nguoiDung.maTaiXe
+    );
+
+}
+
+
+function taiPhieu(){
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(list){
+
+        const box =
+          $("danhSachPhieu");
+
+        box.innerHTML =
+          "";
+
+        if (
+          !list ||
+          !list.length
+        ){
+
+          box.innerHTML =
+            '<div class="empty">' +
+              "Không có phiếu đang xử lý." +
+            "</div>";
+
+          return;
+        }
+
+        (
+          list || []
+        )
+        .forEach(
+          function(p){
+
+            // Chuẩn hóa trạng thái, tránh lỗi do khoảng trắng/ký tự ẩn.
+            const trangThaiHienTai =
+              String(p.trangThai == null ? "" : p.trangThai)
+                .replace(/[\u00A0\u200B\uFEFF]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            const div =
+              document.createElement(
+                "div"
+              );
+
+            div.className =
+              "ticket";
+
+            div.innerHTML =
+
+              '<div class="ticket-head">' +
+
+                '<div class="ticket-title">' +
+                  "Phiếu " +
+                  escapeHtml(
+                    p.maPhieu
+                  ) +
+                "</div>" +
+
+                '<div class="badge">' +
+                  "Mẫu " +
+                  escapeHtml(
+                    p.mauPhieu
+                  ) +
+                "</div>" +
+
+              "</div>" +
+
+              '<div class="ticket-grid">' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Khách hàng</div>' +
+                  '<div class="ticket-value">' +
+                    escapeHtml(p.khachHang) +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Dự án</div>' +
+                  '<div class="ticket-value">' +
+                    escapeHtml(p.congTrinh) +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Mác</div>' +
+                  '<div class="ticket-value">' +
+                    escapeHtml(p.mac) +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Độ sụt</div>' +
+                  '<div class="ticket-value">' +
+                    escapeHtml(p.doSut) +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Số lượng</div>' +
+                  '<div class="ticket-value">' +
+                    num(p.soLuong) +
+                    " m³" +
+                  '</div>' +
+                '</div>' +
+
+                '<div class="ticket-item">' +
+                  '<div class="ticket-label">Lũy kế</div>' +
+                  '<div class="ticket-value">' +
+                    num(p.luyKe) +
+                    " m³" +
+                  '</div>' +
+                '</div>' +
+
+              "</div>" +
+
+              '<div class="status-box">' +
+                '<div class="status-title">Trạng thái</div>' +
+                '<div class="status-value">' +
+                  escapeHtml(trangThaiHienTai) +
+                '</div>' +
+                '<div class="meta">' +
+                  (
+                    p.thoiGianDen
+                      ?
+                      "Đến công trình: " +
+                      escapeHtml(p.thoiGianDen)
+                      :
+                      "Chưa đến công trình"
+                  ) +
+                '</div>' +
+              '</div>';
+
+            const actions =
+              document.createElement(
+                "div"
+              );
+
+            actions.className =
+              "driver-actions";
+
+            // ==================================================
+            // QUY TRÌNH MỚI:
+            // ĐANG CHỜ
+            //      ↓
+            // ĐÃ NHẬN PHIẾU
+            //      ↓
+            // GIAO HÀNG XONG / THẤT BẠI
+            //      ↓
+            // HOÀN THÀNH / THẤT BẠI
+            //      ↓
+            // ĐÃ VỀ ĐẾN TRẠM
+            //      ↓
+            // ĐÓNG PHIẾU
+            // ==================================================
+
+            if (
+              trangThaiHienTai === "Đang chờ"
+            ) {
+
+              const btnNhan =
+                document.createElement(
+                  "button"
+                );
+
+              btnNhan.className =
+                "btn-green";
+
+              btnNhan.textContent =
+                "✓ ĐÃ NHẬN PHIẾU";
+
+              btnNhan.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Đã nhận phiếu",
+                    btnNhan
+                  );
+                };
+
+              actions.appendChild(
+                btnNhan
+              );
+
+            }
+            else if (
+              trangThaiHienTai ===
+              "Đã nhận phiếu"
+            ) {
+
+              const btnGiao =
+                document.createElement(
+                  "button"
+                );
+
+              btnGiao.className =
+                "btn-orange";
+
+              btnGiao.textContent =
+                "✓ GIAO HÀNG XONG";
+
+              btnGiao.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Đã giao hàng xong",
+                    btnGiao
+                  );
+                };
+
+              actions.appendChild(
+                btnGiao
+              );
+
+              const btnFail =
+                document.createElement(
+                  "button"
+                );
+
+              btnFail.className =
+                "btn-red";
+
+              btnFail.textContent =
+                "✕ THẤT BẠI";
+
+              btnFail.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Thất bại",
+                    btnFail
+                  );
+                };
+
+              actions.appendChild(
+                btnFail
+              );
+
+            }
+            else if (
+              trangThaiHienTai ===
+              "Đã giao hàng xong"
+            ) {
+
+              const btnOk =
+                document.createElement(
+                  "button"
+                );
+
+              btnOk.className =
+                "btn-green";
+
+              btnOk.textContent =
+                "✓ HOÀN THÀNH";
+
+              btnOk.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Thành công",
+                    btnOk
+                  );
+                };
+
+              actions.appendChild(
+                btnOk
+              );
+
+              const btnFail =
+                document.createElement(
+                  "button"
+                );
+
+              btnFail.className =
+                "btn-red";
+
+              btnFail.textContent =
+                "✕ THẤT BẠI";
+
+              btnFail.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Thất bại",
+                    btnFail
+                  );
+                };
+
+              actions.appendChild(
+                btnFail
+              );
+
+            }
+            else if (
+              trangThaiHienTai ===
+              "Thất bại"
+            ) {
+
+              const btnVeTram =
+                document.createElement(
+                  "button"
+                );
+
+              btnVeTram.className =
+                "btn-primary";
+
+              btnVeTram.textContent =
+                "↩ ĐÃ VỀ ĐẾN TRẠM";
+
+              btnVeTram.onclick =
+                function () {
+                  capNhatTrangThai(
+                    p.row,
+                    "Đã về đến trạm",
+                    btnVeTram
+                  );
+                };
+
+              actions.appendChild(
+                btnVeTram
+              );
+            }
+
+            div.appendChild(
+              actions
+            );
+
+            box.appendChild(
+              div
+            );
+
+          }
+        );
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e){
+
+        $("danhSachPhieu")
+          .innerHTML =
+
+            '<div class="message error">' +
+              escapeHtml(
+                e.message
+              ) +
+            "</div>";
+
+      }
+    )
+
+    .layPhieu(
+      nguoiDung.maTaiXe,
+      bienSoTaiXeDaChon
+    );
+
+}
+
+
+// ============================================================
+// TRẠNG THÁI TÀI XẾ
+// ============================================================
+
+
+function capNhatTrangThai(
+  row,
+  status,
+  button
+){
+
+  let confirmText = "";
+
+  if (
+    status === "Đã nhận phiếu"
+  ) {
+    confirmText =
+      "Xác nhận bạn đã NHẬN PHIẾU?\n\n" +
+      "Hệ thống sẽ lấy vị trí GPS hiện tại của bạn.";
+  }
+  else if (
+    status === "Đã giao hàng xong"
+  ) {
+    confirmText =
+      "Xác nhận bạn đã GIAO HÀNG XONG?\n\n" +
+      "Hệ thống sẽ lấy vị trí GPS hiện tại của bạn.";
+  }
+  else if (
+    status === "Thành công"
+  ) {
+    confirmText =
+      "Xác nhận HOÀN THÀNH?\n\n" +
+      "Phiếu sẽ được đóng sau khi xác nhận.";
+  }
+  else if (
+    status === "Thất bại"
+  ) {
+    confirmText =
+      "Xác nhận phiếu THẤT BẠI?\n\n" +
+      "Hệ thống sẽ cộng 1 lần thất bại ngay bây giờ.\n" +
+      "Sau đó khi về trạm bạn phải bấm ĐÃ VỀ ĐẾN TRẠM để đóng phiếu.\n\n" +
+      "Hệ thống sẽ lấy vị trí GPS hiện tại của bạn.";
+  }
+  else if (
+    status === "Đã về đến trạm"
+  ) {
+    confirmText =
+      "Xác nhận bạn đã VỀ ĐẾN TRẠM?\n\n" +
+      "Phiếu sẽ được đóng và không cộng thêm thất bại.";
+  }
+  else {
+    confirmText =
+      "Xác nhận cập nhật trạng thái?";
+  }
+
+  if (!confirm(confirmText)) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent =
+    "📍 ĐANG LẤY GPS...";
+
+  function khoiPhucNut(){
+    button.disabled = false;
+
+    if (
+      status === "Đã nhận phiếu"
+    ) {
+      button.textContent =
+        "✓ ĐÃ NHẬN PHIẾU";
+    }
+    else if (
+      status === "Đã giao hàng xong"
+    ) {
+      button.textContent =
+        "✓ GIAO HÀNG XONG";
+    }
+    else if (
+      status === "Thành công"
+    ) {
+      button.textContent =
+        "✓ HOÀN THÀNH";
+    }
+    else if (
+      status === "Đã về đến trạm"
+    ) {
+      button.textContent =
+        "↩ ĐÃ VỀ ĐẾN TRẠM";
+    }
+    else {
+      button.textContent =
+        "✕ THẤT BẠI";
+    }
+  }
+
+  if (!navigator.geolocation) {
+    alert(
+      "Thiết bị/trình duyệt không hỗ trợ GPS."
+    );
+    khoiPhucNut();
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(position){
+
+      const latitude =
+        Number(
+          position.coords.latitude
+        );
+
+      const longitude =
+        Number(
+          position.coords.longitude
+        );
+
+      if (
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+      ) {
+        alert(
+          "GPS trả về tọa độ không hợp lệ."
+        );
+        khoiPhucNut();
+        return;
+      }
+
+      button.textContent =
+        "⏳ ĐANG CẬP NHẬT...";
+
+      google.script.run
+
+        .withSuccessHandler(
+          function(r){
+
+            if (!r || !r.success) {
+              alert(
+                (r && r.message)
+                  ? r.message
+                  : "Không thể cập nhật trạng thái."
+              );
+              khoiPhucNut();
+              return;
+            }
+
+            let message =
+              r.message ||
+              "Đã cập nhật trạng thái.";
+
+            if (
+              r.choVeTram
+            ) {
+              message +=
+                "\n\n↩ Phiếu vẫn đang mở. Khi xe về đến trạm, hãy bấm ĐÃ VỀ ĐẾN TRẠM.";
+            }
+
+            if (
+              r.dongPhieu
+            ) {
+              message +=
+                "\n\n🗑️ Phiếu đã được đóng.";
+            }
+
+            message +=
+              "\n\n📍 GPS đã được lưu vào QUAN_LY_LAI_XE.";
+
+            alert(message);
+
+            taiThongKeTaiXe();
+            taiPhieu();
+
+          }
+        )
+
+        .withFailureHandler(
+          function(e){
+
+            alert(
+              (e && e.message)
+                ? e.message
+                : "Không thể cập nhật."
+            );
+
+            khoiPhucNut();
+
+          }
+        )
+
+        .capNhatTrangThaiTaiXe(
+          row,
+          nguoiDung.maTaiXe,
+          status,
+          {
+            latitude:
+              latitude,
+            longitude:
+              longitude
+          },
+          bienSoTaiXeDaChon
+        );
+
+    },
+
+    function(error){
+
+      let message =
+        "Không thể lấy vị trí GPS.";
+
+      if (
+        error.code ===
+        error.PERMISSION_DENIED
+      ) {
+        message =
+          "Bạn đã từ chối quyền vị trí.\n\n" +
+          "Hãy bật quyền Vị trí/GPS cho trình duyệt rồi thử lại.";
+      }
+      else if (
+        error.code ===
+        error.POSITION_UNAVAILABLE
+      ) {
+        message =
+          "Không xác định được vị trí hiện tại.\n\n" +
+          "Hãy kiểm tra GPS và thử lại.";
+      }
+      else if (
+        error.code ===
+        error.TIMEOUT
+      ) {
+        message =
+          "Lấy GPS quá lâu.\n\n" +
+          "Hãy thử lại ở nơi có tín hiệu GPS tốt hơn.";
+      }
+
+      alert(message);
+      khoiPhucNut();
+    },
+
+    {
+      enableHighAccuracy:
+        true,
+      timeout:
+        15000,
+      maximumAge:
+        0
+    }
+  );
+
+}
+
+
+// ============================================================
+// IN PHIẾU
+// ============================================================
+
+
+function inPhieu(){
+
+  if (
+    !phieuMoi ||
+    !phieuMoi.maPhieu
+  ){
+
+    alert(
+      "Chưa có phiếu để in."
+    );
+
+    return;
+
+  }
+
+
+  google.script.run
+
+    .withSuccessHandler(
+      function(p){
+
+        if (
+          !p ||
+          !p.success
+        ){
+
+          alert(
+            p?.message ||
+            "Không tìm thấy phiếu."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          p.mauPhieu ===
+          "2"
+        ){
+
+          renderMau2(
+            p
+          );
+
+        }
+        else{
+
+          renderMau1(
+            p
+          );
+
+        }
+
+      }
+    )
+
+    .withFailureHandler(
+      function(e){
+
+        alert(
+          e.message
+        );
+
+      }
+    )
+
+    .layDuLieuInPhieu(
+      phieuMoi.maPhieu
+    );
+
+}
+
+
+// ============================================================
+// MẪU 1
+// ============================================================
+
+function renderMau1(
+  p
+){
+
+  $("printTemp")
+    .innerHTML =
+
+`<div class="print-page">
+
+  <div class="p-company">
+    CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+  </div>
+
+  <div class="p-sub">
+    Độc lập - Tự do - Hạnh phúc
+  </div>
+
+  <div class="p-title">
+    PHIẾU GIAO NHẬN BÊ TÔNG
+  </div>
+
+  <div style="text-align:center;font-weight:700;margin:4px 0;">
+    ${escapeHtml(p.loaiVanHanh)} — Địa điểm xuất phiếu: ${escapeHtml(p.diaDiemXuatPhieu)}
+  </div>
+
+  <table class="p-table">
+
+    <tr>
+
+      <th class="red">
+        Đơn vị bán hàng
+      </th>
+
+      <td colspan="2">
+        ${escapeHtml(
+          p.donViBanHang
+        )}
+      </td>
+
+      <th class="red">
+        Số phiếu
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.soPhieu
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th class="red">
+        Đơn vị mua hàng
+      </th>
+
+      <td colspan="2">
+        ${escapeHtml(
+          p.donViMuaHang
+        )}
+      </td>
+
+      <th class="red">
+        Thời gian xuất phát
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.thoiGianXuatPhat
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th class="red">
+        Dự án
+      </th>
+
+      <td colspan="2">
+        ${escapeHtml(
+          p.duAn
+        )}
+      </td>
+
+      <th class="red">
+        Thời gian đến
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.thoiGianDenCongTrinh
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th class="red">
+        Địa chỉ
+      </th>
+
+      <td colspan="4">
+        ${escapeHtml(
+          p.diaChiGiaoHang
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th class="blue">
+        Mác
+      </th>
+
+      <th class="blue">
+        ĐVT
+      </th>
+
+      <th class="blue">
+        Độ sụt
+      </th>
+
+      <th class="blue">
+        Số lượng
+      </th>
+
+      <th class="blue">
+        LŨY KẾ
+      </th>
+
+    </tr>
+
+
+    <tr>
+
+      <td>
+        ${escapeHtml(
+          p.mac
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          p.donViTinh
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          p.doSut
+        )}
+      </td>
+
+      <td>
+        ${num(
+          p.soLuong
+        )}
+      </td>
+
+      <td>
+        ${num(
+          p.luyKe
+        )}
+      </td>
+
+    </tr>
+
+  </table>
+
+
+  <table class="p-sign">
+
+    <tr>
+
+      <td>
+        <b>
+          VẬN HÀNH
+        </b>
+      </td>
+
+      <td>
+        <b>
+          ĐẠI DIỆN BÊN MUA
+        </b>
+      </td>
+
+    </tr>
+
+    <tr>
+
+      <td class="sigspace"></td>
+      <td class="sigspace"></td>
+
+    </tr>
+
+    <tr>
+
+      <td>
+        <b>
+          ${escapeHtml(
+            p.hoTenNguoiVanHanh || p.hoTenTaiXe
+          )}
+        </b>
+      </td>
+
+      <td></td>
+
+    </tr>
+
+  </table>
+
+</div>`;
+
+
+  printNow(
+    "portrait"
+  );
+
+}
+
+
+// ============================================================
+// MẪU 2
+// ============================================================
+
+function renderMau2(
+  p
+){
+
+  const cp =
+    p.capPhoi ||
+    {};
+
+  const rt =
+    p.canThucTe ||
+    {};
+
+
+  function value(
+    v
+  ){
+
+    if (
+      v === "" ||
+      v == null
+    ){
+
+      return "";
+
+    }
+
+    return num(
+      v
+    );
+
+  }
+
+
+  $("printTemp")
+    .innerHTML =
+
+`<div class="print-page">
+
+  <div class="p-company">
+    CÔNG TY CỔ PHẦN RITECCONS
+  </div>
+
+  <div class="p-title">
+    PHIẾU GIAO NHẬN BÊ TÔNG
+  </div>
+
+  <div style="text-align:center;font-weight:700;margin:4px 0;">
+    ${escapeHtml(p.loaiVanHanh)} — Địa điểm xuất phiếu: ${escapeHtml(p.diaDiemXuatPhieu)}
+  </div>
+
+
+  <table class="p-table">
+
+    <tr>
+
+      <th>
+        Ngày
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.ngay
+        )}
+      </td>
+
+      <th class="orange">
+        Số phiếu
+      </th>
+
+      <td class="orange">
+        ${escapeHtml(
+          p.soPhieu
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Đơn vị bán hàng
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.donViBanHang
+        )}
+      </td>
+
+      <th class="orange">
+        Nhân viên KD
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.kd
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Đơn vị mua hàng
+      </th>
+
+      <td colspan="3">
+        ${escapeHtml(
+          p.donViMuaHang
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Dự án
+      </th>
+
+      <td colspan="3">
+        ${escapeHtml(
+          p.duAn
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Địa chỉ giao hàng
+      </th>
+
+      <td colspan="3">
+        ${escapeHtml(
+          p.diaChiGiaoHang
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Cấp độ bê tông
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.capDoBeTong
+        )}
+      </td>
+
+      <th>
+        Độ sụt
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.doSut
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Biển số xe
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.bienSo
+        )}
+      </td>
+
+      <th>
+        Hạng mục
+      </th>
+
+      <td></td>
+
+    </tr>
+
+  </table>
+
+
+  <table class="p-table">
+
+
+    <tr>
+
+      <td
+        colspan="6"
+        class="lightblue"
+      >
+        KHỐI LƯỢNG ĐỊNH MỨC THIẾT KẾ
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Cát 1
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.cat1
+        )}
+      </td>
+
+      <th>
+        Đá 1
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.da1
+        )}
+      </td>
+
+      <th>
+        Đá 2
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.da2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Cát 2
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.cat2
+        )}
+      </td>
+
+      <th>
+        Xi măng 1
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.xiMang1
+        )}
+      </td>
+
+      <th>
+        Xi măng 2
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.xiMang2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Nước
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.nuoc
+        )}
+      </td>
+
+      <th>
+        PG1
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.pg1
+        )}
+      </td>
+
+      <th>
+        PG2
+      </th>
+
+      <td>
+        ${escapeHtml(
+          cp.pg2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td
+        colspan="6"
+        class="lightblue"
+      >
+        KHỐI LƯỢNG CÂN THỰC TẾ
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Cát 1
+      </th>
+
+      <td>
+        ${value(
+          rt.cat1
+        )}
+      </td>
+
+      <th>
+        Đá 1
+      </th>
+
+      <td>
+        ${value(
+          rt.da1
+        )}
+      </td>
+
+      <th>
+        Đá 2
+      </th>
+
+      <td>
+        ${value(
+          rt.da2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Cát 2
+      </th>
+
+      <td>
+        ${value(
+          rt.cat2
+        )}
+      </td>
+
+      <th>
+        Xi măng 1
+      </th>
+
+      <td>
+        ${value(
+          rt.xiMang1
+        )}
+      </td>
+
+      <th>
+        Xi măng 2
+      </th>
+
+      <td>
+        ${value(
+          rt.xiMang2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Nước
+      </th>
+
+      <td>
+        ${value(
+          rt.nuoc
+        )}
+      </td>
+
+      <th>
+        PG1
+      </th>
+
+      <td>
+        ${value(
+          rt.pg1
+        )}
+      </td>
+
+      <th>
+        PG2
+      </th>
+
+      <td>
+        ${value(
+          rt.pg2
+        )}
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <th>
+        Khối lượng
+      </th>
+
+      <td>
+        <b>
+          ${num(
+            p.soLuong
+          )}
+          m³
+        </b>
+      </td>
+
+      <th>
+        Tích lũy
+      </th>
+
+      <td>
+        <b>
+          ${num(
+            p.luyKe
+          )}
+          m³
+        </b>
+      </td>
+
+      <th>
+        Giờ đến công trình
+      </th>
+
+      <td>
+        ${escapeHtml(
+          p.thoiGianDenCongTrinh
+        )}
+      </td>
+
+    </tr>
+
+
+  </table>
+
+
+  <table class="p-sign">
+
+    <tr>
+
+      <td>
+        <b>
+          BÊN BÁN
+        </b>
+      </td>
+
+      <td>
+        <b>
+          BÊN MUA
+        </b>
+      </td>
+
+    </tr>
+
+
+    <tr>
+
+      <td class="sigspace"></td>
+
+      <td class="sigspace"></td>
+
+    </tr>
+
+
+    <tr>
+
+      <td>
+        <b>
+          ${escapeHtml(
+            p.hoTenNguoiVanHanh || p.hoTenTaiXe
+          )}
+        </b>
+      </td>
+
+      <td></td>
+
+    </tr>
+
+  </table>
+
+
+</div>`;
+
+
+  printNow(
+    "landscape"
+  );
+
+}
+
+
+// ============================================================
+// PRINT
+// ============================================================
+
+function printNow(
+  orientation
+){
+
+  const old =
+    document.getElementById(
+      "printOri"
+    );
+
+
+  if (old){
+    old.remove();
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "printOri";
+
+
+  style.textContent =
+
+    "@media print{" +
+
+      "@page{" +
+
+        "size:A4 " +
+        orientation +
+        ";" +
+
+        "margin:8mm;" +
+
+      "}" +
+
+    "}";
+
+
+  document.head.appendChild(
+    style
+  );
+
+
+  setTimeout(
+    function(){
+
+      window.print();
+
+    },
+    200
+  );
+
+
+  window.onafterprint =
+    function(){
+
+      const s =
+        document.getElementById(
+          "printOri"
+        );
+
+
+      if (s){
+        s.remove();
+      }
+
+
+      $("printTemp")
+        .innerHTML =
+        "";
+
+
+      window.onafterprint =
+        null;
+
+    };
+
+}
+
+
+// ============================================================
+// ĐĂNG XUẤT
+// ============================================================
+
+function dangXuat(){
+
+  nguoiDung =
+    null;
+
+  phieuMoi =
+    null;
+
+  bienSoTaiXeDaChon = "";
+  if ($("loaiVanHanh")) $("loaiVanHanh").value = "";
+  if ($("diaDiemXuatPhieu")) $("diaDiemXuatPhieu").value = "";
+  if ($("taoPhieuVanHanhCard")) $("taoPhieuVanHanhCard").classList.add("hidden");
+  if ($("chonDiaDiemVanHanhBox")) $("chonDiaDiemVanHanhBox").classList.remove("hidden");
+
+
+  hienTrang(
+    "loginPage"
+  );
+
+
+  $("maDangNhap")
+    .value =
+    "";
+
+  $("matKhau")
+    .value =
+    "";
+
+
+  $("loginMessage")
+    .className =
+    "message hidden";
+
+}
+
+
+// ============================================================
+// ENTER
+// ============================================================
+
+$("matKhau")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if (
+        e.key ===
+        "Enter"
+      ){
+
+        dangNhap();
+
+      }
+
+    }
+  );
+
+
+// ============================================================
+// KHỞI ĐỘNG
+// ============================================================
+
+hienTrang(
+  "loginPage"
+);
+
+</script>
+
+</body>
+</html>

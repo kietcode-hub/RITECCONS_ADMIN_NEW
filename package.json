@@ -1,0 +1,13 @@
+{
+  "name": "riteccons-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RITECCONS - local Node.js runner for VS Code",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
