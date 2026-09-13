@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = Number(process.env.PORT || 3000);
-const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxPhkGewboGcaVVohzjNTceULhOel6WzNpX1zjHWcCcD_ZzMrKtZIqoZBdOQHb4NgbR/exec';
+const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxOeAjrx5c5Ai-YAufs-OTB0jeuX5UQMxI16kbcKKGJjwoukbm3uFMe7LggqHON8gSn/exec';
 const ROOT = __dirname;
 
 function send(res, status, type, body) {

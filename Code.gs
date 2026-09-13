@@ -17,6 +17,7 @@ const SHEET_QUAN_LY_LAI_XE = "QUAN_LY_LAI_XE";
 const SHEET_SO_CHUYEN = "SO_CHUYEN";
 const SHEET_BANG_CHAM_CONG = "BANG_CHAM_CONG";
 const SHEET_PHAN_QUYEN = "PHAN_QUYEN";
+const SHEET_THONG_KE_PHIEU_TN = "THONG_KE_PHIEU_TN";
 
 
 // ============================================================
@@ -396,9 +397,13 @@ function getSheet_(name) {
 
 function text_(v) {
 
+  // .normalize("NFC") để tránh trường hợp gõ tiếng Việt trên Google Sheet
+  // (đặc biệt là ký tự đã có dấu dán vào từ Word) tạo ra chuỗi Unicode
+  // dựng sẵn khác dạng (NFD) trông giống hệt nhưng so sánh "===" bị sai,
+  // gây lỗi kiểu "Vai trò không hợp lệ" dù gõ đúng chữ.
   return String(
     v == null ? "" : v
-  ).trim();
+  ).trim().normalize("NFC");
 
 }
 
@@ -891,7 +896,8 @@ function dangNhap(
         if (
           vaiTro !== "Admin" &&
           vaiTro !== "Kế toán" &&
-          vaiTro !== "Vận hành"
+          vaiTro !== "Vận hành" &&
+          vaiTro !== "Thí nghiệm"
         ) {
 
           return {
@@ -3806,6 +3812,273 @@ function suaHeaderNhatKy() {
   };
 
 }
+
+// ============================================================
+// THÍ NGHIỆM
+// Xem phiếu theo khách hàng + dự án, đánh dấu ĐÃ XEM, và KÝ phiếu.
+// Ký xong -> ghi 1 dòng vào THONG_KE_PHIEU_TN và phiếu biến mất khỏi
+// danh sách (KHÔNG đụng vào cột TRẠNG THÁI vận hành ở PHIEU/NHAT_KY,
+// trạng thái Thí nghiệm được lưu riêng ở cột R:T của NHAT_KY).
+// ============================================================
+
+function laThiNghiem_(maNguoiDung) {
+  const sh = getSheet_(SHEET_TAI_KHOAN);
+  if (!sh) return false;
+
+  const data = sh.getDataRange().getValues();
+  const ma = text_(maNguoiDung);
+
+  for (let i = 1; i < data.length; i++) {
+    if (
+      text_(data[i][0]) === ma &&
+      text_(data[i][3]) === "Thí nghiệm" &&
+      text_(data[i][4]) === "Đang hoạt động"
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function getHoTenTaiKhoan_(ma) {
+  ma = text_(ma);
+  if (!ma) return "";
+
+  const sh = getSheet_(SHEET_TAI_KHOAN);
+  if (!sh || sh.getLastRow() < 2) return "";
+
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (text_(data[i][0]) === ma) return text_(data[i][1]);
+  }
+
+  return "";
+}
+
+// Đảm bảo NHAT_KY có 3 cột R:T dành riêng cho trạng thái Thí nghiệm.
+function ensureCotThiNghiemNhatKy_() {
+  const nk = getSheet_(SHEET_NHAT_KY);
+  if (!nk) return null;
+
+  const neededCols = 20;
+  if (nk.getMaxColumns() < neededCols) {
+    nk.insertColumnsAfter(nk.getMaxColumns(), neededCols - nk.getMaxColumns());
+  }
+
+  if (!text_(nk.getRange(1, 18).getValue())) {
+    nk.getRange(1, 18, 1, 3).setValues([[
+      "TRẠNG THÁI THÍ NGHIỆM",
+      "NGƯỜI KÝ (TN)",
+      "THỜI GIAN KÝ (TN)"
+    ]]);
+  }
+
+  return nk;
+}
+
+function ensureThongKePhieuTNSheet_() {
+  const ss = getSpreadsheet();
+  let sh = ss.getSheetByName(SHEET_THONG_KE_PHIEU_TN);
+
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_THONG_KE_PHIEU_TN);
+
+    sh.getRange(1, 1, 1, 17).setValues([[
+      "SỐ PHIẾU",
+      "ĐƠN VỊ MUA HÀNG",
+      "DỰ ÁN",
+      "KD",
+      "MÁC",
+      "ĐỘ SỤT",
+      "SỐ LƯỢNG",
+      "ĐVT",
+      "LŨY KẾ",
+      "TÀI XẾ",
+      "BIỂN SỐ XE",
+      "LOẠI VẬN HÀNH",
+      "ĐỊA ĐIỂM XUẤT PHIẾU",
+      "TRẠNG THÁI VẬN HÀNH",
+      "MÃ NGƯỜI KÝ",
+      "HỌ TÊN NGƯỜI KÝ",
+      "THỜI GIAN KÝ"
+    ]]);
+
+    sh.getRange(1, 1, 1, 17).setFontWeight("bold");
+    sh.setFrozenRows(1);
+  }
+
+  return sh;
+}
+
+// Dự án không gắn cứng với khách hàng ở sheet DU_AN, nên danh sách "dự án
+// tương ứng" của 1 khách hàng phải suy ra từ lịch sử phiếu ở NHAT_KY.
+function layDuAnTheoKhachHangTN(khachHang) {
+  khachHang = text_(khachHang);
+  if (!khachHang) return [];
+
+  const nk = getSheet_(SHEET_NHAT_KY);
+  if (!nk || nk.getLastRow() < 2) return [];
+
+  const data = nk.getRange(2, 5, nk.getLastRow() - 1, 2).getValues();
+  const seen = {};
+  const result = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const kh = text_(data[i][0]);
+    const da = text_(data[i][1]);
+    if (kh !== khachHang || !da) continue;
+
+    const k = key_(da);
+    if (seen[k]) continue;
+    seen[k] = true;
+
+    result.push(da);
+  }
+
+  result.sort();
+  return result;
+}
+
+// Toàn bộ phiếu (mọi trạng thái vận hành) của 1 khách hàng + 1 dự án,
+// trừ những phiếu đã được Thí nghiệm bấm KÝ.
+function layDanhSachPhieuThiNghiem(khachHang, duAn) {
+  khachHang = text_(khachHang);
+  duAn = text_(duAn);
+
+  if (!khachHang || !duAn) {
+    return {success:false, message:"Vui lòng chọn khách hàng và dự án.", rows:[]};
+  }
+
+  const nk = ensureCotThiNghiemNhatKy_();
+  if (!nk || nk.getLastRow() < 2) {
+    return {success:true, rows:[]};
+  }
+
+  const data = nk.getRange(2, 1, nk.getLastRow() - 1, 20).getValues();
+  const result = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const r = data[i];
+    if (text_(r[4]) !== khachHang) continue;
+    if (text_(r[5]) !== duAn) continue;
+
+    const trangThaiTN = text_(r[17]) || "Chưa xem";
+    if (trangThaiTN === "Đã ký") continue;
+
+    result.push({
+      maPhieu: text_(r[0]),
+      taiXe: text_(r[1]),
+      khachHang: text_(r[4]),
+      duAn: text_(r[5]),
+      kd: text_(r[6]),
+      mac: text_(r[7]),
+      dvt: text_(r[8]),
+      doSut: text_(r[9]),
+      soLuong: r[10],
+      luyKe: r[11],
+      trangThaiVanHanh: text_(r[12]),
+      mauPhieu: normalizeMau_(r[13]) || "1",
+      bienSo: text_(r[14]),
+      loaiVanHanh: text_(r[15]),
+      diaDiemXuatPhieu: text_(r[16]),
+      trangThaiTN: trangThaiTN
+    });
+  }
+
+  return {success:true, rows:result};
+}
+
+function danhDauDaXemPhieuTN(maPhieu, maNguoiDung) {
+  if (!laThiNghiem_(maNguoiDung)) {
+    return {success:false, message:"Bạn không có quyền Thí nghiệm."};
+  }
+
+  maPhieu = text_(maPhieu);
+  if (!maPhieu) return {success:false, message:"Thiếu số phiếu."};
+
+  const nk = ensureCotThiNghiemNhatKy_();
+  const row = timDongNhatKy_(maPhieu);
+  if (!row) return {success:false, message:"Không tìm thấy phiếu trong NHẬT KÝ."};
+
+  const current = text_(nk.getRange(row, 18).getValue());
+  if (current === "Đã ký") {
+    return {success:false, message:"Phiếu này đã được ký, không thể thay đổi."};
+  }
+
+  nk.getRange(row, 18).setValue("Đã xem");
+
+  return {success:true, message:"Đã đánh dấu ĐÃ XEM.", trangThaiTN:"Đã xem"};
+}
+
+function kyPhieuThiNghiem(maPhieu, maNguoiDung) {
+  if (!laThiNghiem_(maNguoiDung)) {
+    return {success:false, message:"Bạn không có quyền Thí nghiệm."};
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (e) {
+    return {success:false, message:"Hệ thống đang xử lý. Vui lòng thử lại."};
+  }
+
+  try {
+    maPhieu = text_(maPhieu);
+    maNguoiDung = text_(maNguoiDung);
+    if (!maPhieu) return {success:false, message:"Thiếu số phiếu."};
+
+    const nk = ensureCotThiNghiemNhatKy_();
+    const row = timDongNhatKy_(maPhieu);
+    if (!row) return {success:false, message:"Không tìm thấy phiếu trong NHẬT KÝ."};
+
+    const data = nk.getRange(row, 1, 1, 20).getValues()[0];
+
+    if (text_(data[17]) === "Đã ký") {
+      return {success:false, message:"Phiếu này đã được ký trước đó."};
+    }
+
+    const now = new Date();
+    const hoTenNguoiKy = getHoTenTaiKhoan_(maNguoiDung);
+
+    const tk = ensureThongKePhieuTNSheet_();
+    tk.appendRow([
+      text_(data[0]),
+      text_(data[4]),
+      text_(data[5]),
+      text_(data[6]),
+      text_(data[7]),
+      text_(data[9]),
+      data[10],
+      text_(data[8]),
+      data[11],
+      text_(data[1]),
+      text_(data[14]),
+      text_(data[15]),
+      text_(data[16]),
+      text_(data[12]),
+      maNguoiDung,
+      hoTenNguoiKy,
+      now
+    ]);
+
+    nk.getRange(row, 18, 1, 3).setValues([[
+      "Đã ký",
+      maNguoiDung + (hoTenNguoiKy ? (" - " + hoTenNguoiKy) : ""),
+      now
+    ]]);
+
+    return {
+      success:true,
+      message:"Đã ký phiếu và lưu vào THONG_KE_PHIEU_TN.",
+      maPhieu:maPhieu
+    };
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 // ============================================================
 // API JSON CHO PHIEN BAN CHAY LOCAL NODE.JS / VS CODE
 // ============================================================

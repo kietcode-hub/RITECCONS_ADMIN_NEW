@@ -1188,6 +1188,70 @@ button:disabled{
 
 
 <!-- =========================================================
+     THÍ NGHIỆM
+========================================================= -->
+
+<section
+  id="thiNghiemPage"
+  class="hidden"
+>
+
+  <div class="hero">
+    <div class="hero-row">
+      <div>
+        <div class="hero-title">TRUNG TÂM THÍ NGHIỆM</div>
+        <div id="thongTinThiNghiem" class="hero-sub"></div>
+      </div>
+      <div class="hero-badge">THÍ NGHIỆM</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">CHỌN KHÁCH HÀNG / DỰ ÁN</div>
+    <div class="section-note">Chọn khách hàng và dự án tương ứng để xem toàn bộ phiếu vận hành đã in.</div>
+
+    <div class="form-grid" style="margin-top:14px">
+
+      <div class="form-group">
+        <label class="form-label">Khách hàng</label>
+        <select id="tnKhachHangSelect" onchange="tnChonKhachHang()">
+          <option value="">-- Chọn khách hàng --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dự án</label>
+        <select id="tnDuAnSelect" onchange="taiPhieuThiNghiem()">
+          <option value="">-- Chọn dự án --</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div id="tnMessage" class="message hidden"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">DANH SÁCH PHIẾU</div>
+    <div class="section-note">Phiếu ĐÃ KÝ sẽ tự động biến mất khỏi danh sách này và được lưu vào THONG_KE_PHIEU_TN.</div>
+    <div id="danhSachPhieuThiNghiem" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card" id="duLieuBangThiNghiemCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangThiNghiemDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangThiNghiemNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-red" onclick="dangXuat()">ĐĂNG XUẤT</button>
+  </div>
+
+</section>
+
+
+<!-- =========================================================
      VẬN HÀNH
 ========================================================= -->
 
@@ -1915,6 +1979,7 @@ function hienTrang(
     "loginPage",
     "adminPage",
     "keToanPage",
+    "thiNghiemPage",
     "vanHanhPage",
     "taiXePage"
   ]
@@ -2038,6 +2103,11 @@ function dangNhap(){
         else if (r.vaiTro === "Vận hành"){
 
           moVanHanh();
+
+        }
+        else if (r.vaiTro === "Thí nghiệm"){
+
+          moThiNghiem();
 
         }
         else{
@@ -2187,6 +2257,178 @@ function xemDuLieuBang(idPrefix, tenSheet){
     contentBox.innerHTML = '<div class="message error">' + escapeHtml(e.message) + '</div>';
   }).layDuLieuBang(nguoiDung.ma, tenSheet);
 }
+
+// ============================================================
+// THÍ NGHIỆM
+// ============================================================
+
+function moThiNghiem(){
+  hienTrang("thiNghiemPage");
+
+  $("thongTinThiNghiem").innerHTML =
+    "Xin chào <b>" + escapeHtml(nguoiDung.hoTen || nguoiDung.ma || "") +
+    "</b> · Mã " + escapeHtml(nguoiDung.ma || "");
+
+  $("danhSachPhieuThiNghiem").innerHTML = "";
+  $("tnDuAnSelect").innerHTML = '<option value="">-- Chọn dự án --</option>';
+
+  taiKhachHangThiNghiem();
+  taiDuLieuBangDuocCap("duLieuBangThiNghiem");
+}
+
+function taiKhachHangThiNghiem(){
+  google.script.run.withSuccessHandler(function(list){
+    const select = $("tnKhachHangSelect");
+    select.innerHTML = '<option value="">-- Chọn khách hàng --</option>';
+    (list || []).forEach(function(x){
+      const o = document.createElement("option");
+      o.value = x.ten;
+      o.textContent = x.ten;
+      select.appendChild(o);
+    });
+  }).withFailureHandler(function(e){
+    showMsg($("tnMessage"), e.message, false);
+  }).layKhachHang(nguoiDung.ma);
+}
+
+function tnChonKhachHang(){
+  const kh = $("tnKhachHangSelect").value;
+  const selectDuAn = $("tnDuAnSelect");
+
+  $("danhSachPhieuThiNghiem").innerHTML = "";
+  selectDuAn.innerHTML = '<option value="">-- Chọn dự án --</option>';
+
+  if (!kh) return;
+
+  google.script.run.withSuccessHandler(function(list){
+    (list || []).forEach(function(ten){
+      const o = document.createElement("option");
+      o.value = ten;
+      o.textContent = ten;
+      selectDuAn.appendChild(o);
+    });
+
+    if (!list || !list.length) {
+      showMsg($("tnMessage"), "Khách hàng này chưa có phiếu nào.", false);
+    } else {
+      $("tnMessage").classList.add("hidden");
+    }
+  }).withFailureHandler(function(e){
+    showMsg($("tnMessage"), e.message, false);
+  }).layDuAnTheoKhachHangTN(kh);
+}
+
+function taiPhieuThiNghiem(){
+  const kh = $("tnKhachHangSelect").value;
+  const duAn = $("tnDuAnSelect").value;
+  const box = $("danhSachPhieuThiNghiem");
+
+  if (!kh || !duAn) {
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = '<div class="meta">Đang tải danh sách phiếu...</div>';
+
+  google.script.run.withSuccessHandler(function(r){
+    if (!r || !r.success) {
+      box.innerHTML = '<div class="message error">' + escapeHtml((r && r.message) || "Không tải được danh sách phiếu.") + '</div>';
+      return;
+    }
+
+    const list = r.rows || [];
+    if (!list.length) {
+      box.innerHTML = '<div class="empty">Không có phiếu nào cần xem.</div>';
+      return;
+    }
+
+    box.innerHTML = "";
+
+    list.forEach(function(p){
+      const div = document.createElement("div");
+      div.className = "ticket";
+
+      div.innerHTML =
+        '<div class="ticket-head">' +
+          '<div class="ticket-title">Phiếu ' + escapeHtml(p.maPhieu) + '</div>' +
+          '<div class="badge">' + escapeHtml(p.trangThaiTN || "Chưa xem") + '</div>' +
+        '</div>' +
+        '<div class="ticket-grid">' +
+          '<div class="ticket-item"><div class="ticket-label">Khách hàng</div><div class="ticket-value">' + escapeHtml(p.khachHang) + '</div></div>' +
+          '<div class="ticket-item"><div class="ticket-label">Dự án</div><div class="ticket-value">' + escapeHtml(p.duAn) + '</div></div>' +
+          '<div class="ticket-item"><div class="ticket-label">Mác</div><div class="ticket-value">' + escapeHtml(p.mac) + '</div></div>' +
+          '<div class="ticket-item"><div class="ticket-label">Độ sụt</div><div class="ticket-value">' + escapeHtml(p.doSut) + '</div></div>' +
+          '<div class="ticket-item"><div class="ticket-label">Số lượng</div><div class="ticket-value">' + num(p.soLuong) + ' ' + escapeHtml(p.dvt || "m³") + '</div></div>' +
+          '<div class="ticket-item"><div class="ticket-label">Tài xế / Biển số</div><div class="ticket-value">' + escapeHtml(p.taiXe) + ' · ' + escapeHtml(p.bienSo) + '</div></div>' +
+        '</div>' +
+        '<div class="status-box">' +
+          '<div class="status-title">Trạng thái vận hành</div>' +
+          '<div class="status-value">' + escapeHtml(p.trangThaiVanHanh) + '</div>' +
+        '</div>';
+
+      const actions = document.createElement("div");
+      actions.className = "driver-actions";
+
+      if (p.trangThaiTN !== "Đã xem") {
+        const btnXem = document.createElement("button");
+        btnXem.className = "btn-primary";
+        btnXem.textContent = "ĐÃ XEM";
+        btnXem.onclick = function(){ tnDanhDauDaXem(p.maPhieu, btnXem); };
+        actions.appendChild(btnXem);
+      }
+
+      const btnKy = document.createElement("button");
+      btnKy.className = "btn-green";
+      btnKy.textContent = "✓ ĐÃ KÝ";
+      btnKy.onclick = function(){ tnKyPhieu(p.maPhieu, btnKy); };
+      actions.appendChild(btnKy);
+
+      div.appendChild(actions);
+      box.appendChild(div);
+    });
+  }).withFailureHandler(function(e){
+    box.innerHTML = '<div class="message error">' + escapeHtml(e.message) + '</div>';
+  }).layDanhSachPhieuThiNghiem(kh, duAn);
+}
+
+function tnDanhDauDaXem(maPhieu, btn){
+  btn.disabled = true;
+
+  google.script.run.withSuccessHandler(function(r){
+    btn.disabled = false;
+    if (!r || !r.success) {
+      showMsg($("tnMessage"), (r && r.message) || "Không đánh dấu được.", false);
+      return;
+    }
+    taiPhieuThiNghiem();
+  }).withFailureHandler(function(e){
+    btn.disabled = false;
+    showMsg($("tnMessage"), e.message, false);
+  }).danhDauDaXemPhieuTN(maPhieu, nguoiDung.ma);
+}
+
+function tnKyPhieu(maPhieu, btn){
+  if (!confirm("Xác nhận KÝ phiếu " + maPhieu + "? Sau khi ký, phiếu sẽ biến mất khỏi danh sách này.")) return;
+
+  btn.disabled = true;
+  btn.textContent = "ĐANG KÝ...";
+
+  google.script.run.withSuccessHandler(function(r){
+    btn.disabled = false;
+    btn.textContent = "✓ ĐÃ KÝ";
+    if (!r || !r.success) {
+      showMsg($("tnMessage"), (r && r.message) || "Ký phiếu thất bại.", false);
+      return;
+    }
+    showMsg($("tnMessage"), r.message, true);
+    taiPhieuThiNghiem();
+  }).withFailureHandler(function(e){
+    btn.disabled = false;
+    btn.textContent = "✓ ĐÃ KÝ";
+    showMsg($("tnMessage"), e.message, false);
+  }).kyPhieuThiNghiem(maPhieu, nguoiDung.ma);
+}
+
 
 // ============================================================
 // KẾ TOÁN
