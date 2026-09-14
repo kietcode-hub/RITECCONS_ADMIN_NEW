@@ -1252,6 +1252,134 @@ button:disabled{
 
 
 <!-- =========================================================
+     KỸ THUẬT
+========================================================= -->
+
+<section
+  id="kyThuatPage"
+  class="hidden"
+>
+
+  <div class="hero">
+    <div class="hero-row">
+      <div>
+        <div class="hero-title">TRUNG TÂM KỸ THUẬT</div>
+        <div id="thongTinKyThuat" class="hero-sub"></div>
+      </div>
+      <div class="hero-badge">KỸ THUẬT</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">THÊM / SỬA CẤP PHỐI</div>
+    <div class="section-note">Chọn đúng khách hàng, dự án, mác bê tông, độ sụt — nếu đã có cấp phối cho đúng 4 mục này, lưu sẽ ghi đè cập nhật.</div>
+
+    <div class="form-grid" style="margin-top:14px">
+
+      <div class="form-group">
+        <label class="form-label">Khách hàng</label>
+        <select id="ktKhachHangSelect">
+          <option value="">-- Chọn khách hàng --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dự án</label>
+        <select id="ktDuAnSelect">
+          <option value="">-- Chọn dự án --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mác bê tông</label>
+        <input id="ktMac" placeholder="Vd: 250">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Độ sụt (cm)</label>
+        <input id="ktDoSut" placeholder="Vd: 12">
+      </div>
+
+    </div>
+
+    <div class="section-title" style="margin-top:18px">CẤP PHỐI (KG / M³)</div>
+
+    <div class="form-grid" style="margin-top:14px">
+
+      <div class="form-group">
+        <label class="form-label">Cát 1</label>
+        <input id="ktCat1" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Đá 1</label>
+        <input id="ktDa1" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Đá 2</label>
+        <input id="ktDa2" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cát 2</label>
+        <input id="ktCat2" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Xi măng 1</label>
+        <input id="ktXiMang1" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Xi măng 2</label>
+        <input id="ktXiMang2" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nước</label>
+        <input id="ktNuoc" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">PG1</label>
+        <input id="ktPg1" type="number" step="any" placeholder="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">PG2</label>
+        <input id="ktPg2" type="number" step="any" placeholder="0">
+      </div>
+
+    </div>
+
+    <div class="action-row">
+      <button class="btn-primary" onclick="luuCapPhoiKyThuat()">LƯU CẤP PHỐI</button>
+    </div>
+
+    <div id="ktMessage" class="message hidden"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">DANH SÁCH CẤP PHỐI ĐÃ LƯU</div>
+    <div id="ktDanhSachCapPhoi" style="margin-top:12px;overflow-x:auto"></div>
+  </div>
+
+  <div class="card" id="duLieuBangKyThuatCard">
+    <div class="section-title">DỮ LIỆU BẢNG ĐƯỢC CẤP QUYỀN XEM</div>
+    <div class="section-note">Chỉ xem toàn bộ dữ liệu thô của sheet, không thể sửa/xóa/thêm.</div>
+    <div id="duLieuBangKyThuatDanhSach" style="margin-top:12px"></div>
+    <div id="duLieuBangKyThuatNoiDung" style="margin-top:14px;overflow-x:auto"></div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-red" onclick="dangXuat()">ĐĂNG XUẤT</button>
+  </div>
+
+</section>
+
+
+<!-- =========================================================
      VẬN HÀNH
 ========================================================= -->
 
@@ -1980,6 +2108,7 @@ function hienTrang(
     "adminPage",
     "keToanPage",
     "thiNghiemPage",
+    "kyThuatPage",
     "vanHanhPage",
     "taiXePage"
   ]
@@ -2108,6 +2237,11 @@ function dangNhap(){
         else if (r.vaiTro === "Thí nghiệm"){
 
           moThiNghiem();
+
+        }
+        else if (r.vaiTro === "Kỹ Thuật"){
+
+          moKyThuat();
 
         }
         else{
@@ -2427,6 +2561,121 @@ function tnKyPhieu(maPhieu, btn){
     btn.textContent = "✓ ĐÃ KÝ";
     showMsg($("tnMessage"), e.message, false);
   }).kyPhieuThiNghiem(maPhieu, nguoiDung.ma);
+}
+
+
+// ============================================================
+// KỸ THUẬT
+// ============================================================
+
+function moKyThuat(){
+  hienTrang("kyThuatPage");
+
+  $("thongTinKyThuat").innerHTML =
+    "Xin chào <b>" + escapeHtml(nguoiDung.hoTen || nguoiDung.ma || "") +
+    "</b> · Mã " + escapeHtml(nguoiDung.ma || "");
+
+  taiKhachHangKyThuat();
+  taiDuAnKyThuat();
+  taiDanhSachCapPhoiKyThuat();
+  taiDuLieuBangDuocCap("duLieuBangKyThuat");
+}
+
+function taiKhachHangKyThuat(){
+  google.script.run.withSuccessHandler(function(list){
+    const select = $("ktKhachHangSelect");
+    select.innerHTML = '<option value="">-- Chọn khách hàng --</option>';
+    (list || []).forEach(function(x){
+      const o = document.createElement("option");
+      o.value = x.ten;
+      o.textContent = x.ten;
+      select.appendChild(o);
+    });
+  }).withFailureHandler(function(e){
+    showMsg($("ktMessage"), e.message, false);
+  }).layKhachHang(nguoiDung.ma);
+}
+
+function taiDuAnKyThuat(){
+  google.script.run.withSuccessHandler(function(list){
+    const select = $("ktDuAnSelect");
+    select.innerHTML = '<option value="">-- Chọn dự án --</option>';
+    (list || []).forEach(function(x){
+      const o = document.createElement("option");
+      o.value = x.ten;
+      o.textContent = x.ten;
+      select.appendChild(o);
+    });
+  }).withFailureHandler(function(e){
+    showMsg($("ktMessage"), e.message, false);
+  }).layDuAn(nguoiDung.ma);
+}
+
+function luuCapPhoiKyThuat(){
+  const form = {
+    khachHang: $("ktKhachHangSelect").value,
+    duAn: $("ktDuAnSelect").value,
+    mac: $("ktMac").value.trim(),
+    doSut: $("ktDoSut").value.trim(),
+    cat1: $("ktCat1").value,
+    da1: $("ktDa1").value,
+    da2: $("ktDa2").value,
+    cat2: $("ktCat2").value,
+    xiMang1: $("ktXiMang1").value,
+    xiMang2: $("ktXiMang2").value,
+    nuoc: $("ktNuoc").value,
+    pg1: $("ktPg1").value,
+    pg2: $("ktPg2").value
+  };
+
+  if (!form.khachHang || !form.duAn) {
+    showMsg($("ktMessage"), "Vui lòng chọn khách hàng và dự án.", false);
+    return;
+  }
+  if (!form.mac || !form.doSut) {
+    showMsg($("ktMessage"), "Vui lòng nhập Mác bê tông và Độ sụt.", false);
+    return;
+  }
+
+  google.script.run.withSuccessHandler(function(r){
+    showMsg($("ktMessage"), (r && r.message) || "Đã lưu.", !!(r && r.success));
+    if (r && r.success) taiDanhSachCapPhoiKyThuat();
+  }).withFailureHandler(function(e){
+    showMsg($("ktMessage"), e.message, false);
+  }).themCapPhoi(nguoiDung.ma, form);
+}
+
+function taiDanhSachCapPhoiKyThuat(){
+  const box = $("ktDanhSachCapPhoi");
+  box.innerHTML = '<div class="meta">Đang tải danh sách cấp phối...</div>';
+
+  google.script.run.withSuccessHandler(function(list){
+    list = list || [];
+    if (!list.length) {
+      box.innerHTML = '<div class="empty">Chưa có cấp phối nào.</div>';
+      return;
+    }
+
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:12px">';
+    html += '<tr>' + [
+      "Khách hàng","Dự án","Mác","Độ sụt","Cát 1","Đá 1","Đá 2","Cát 2","Xi măng 1","Xi măng 2","Nước","PG1","PG2"
+    ].map(function(h){
+      return '<th style="border:1px solid #d0d5dd;padding:6px;background:#f8fafc;text-align:left;white-space:nowrap">' + escapeHtml(h) + '</th>';
+    }).join('') + '</tr>';
+
+    list.forEach(function(x){
+      html += '<tr>' + [
+        x.khachHang, x.duAn, x.mac, x.doSut, x.cat1, x.da1, x.da2, x.cat2, x.xiMang1, x.xiMang2, x.nuoc, x.pg1, x.pg2
+      ].map(function(v){
+        return '<td style="border:1px solid #e3e8ef;padding:6px;white-space:nowrap">' + escapeHtml(v == null ? "" : v) + '</td>';
+      }).join('') + '</tr>';
+    });
+
+    html += '</table>';
+    box.innerHTML = html;
+  }).withFailureHandler(function(e){
+    box.innerHTML = '<div class="message error">' + escapeHtml(e.message) + '</div>';
+  }).layDanhSachCapPhoi();
 }
 
 

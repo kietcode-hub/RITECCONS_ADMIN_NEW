@@ -897,7 +897,8 @@ function dangNhap(
           vaiTro !== "Admin" &&
           vaiTro !== "Kế toán" &&
           vaiTro !== "Vận hành" &&
-          vaiTro !== "Thí nghiệm"
+          vaiTro !== "Thí nghiệm" &&
+          vaiTro !== "Kỹ Thuật"
         ) {
 
           return {
@@ -1920,6 +1921,120 @@ function layCapPhoi(
 
   };
 
+}
+
+
+// ============================================================
+// KỸ THUẬT - THÊM / SỬA CẤP PHỐI
+// ============================================================
+
+function laKyThuat_(maNguoiDung) {
+  const sh = getSheet_(SHEET_TAI_KHOAN);
+  if (!sh) return false;
+
+  const data = sh.getDataRange().getValues();
+  const ma = text_(maNguoiDung);
+
+  for (let i = 1; i < data.length; i++) {
+    if (
+      text_(data[i][0]) === ma &&
+      text_(data[i][3]) === "Kỹ Thuật" &&
+      text_(data[i][4]) === "Đang hoạt động"
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Toàn bộ cấp phối hiện có, để Kỹ Thuật xem lại trước khi thêm/sửa.
+function layDanhSachCapPhoi() {
+  const sh = ensureCapPhoiSheet_();
+  if (sh.getLastRow() < 2) return [];
+
+  const data = sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues();
+  const result = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const r = data[i];
+    if (!text_(r[0]) || !text_(r[1])) continue;
+
+    result.push({
+      row: i + 2,
+      khachHang: text_(r[0]),
+      duAn: text_(r[1]),
+      mac: text_(r[2]),
+      doSut: text_(r[3]),
+      cat1: r[4],
+      da1: r[5],
+      da2: r[6],
+      cat2: r[7],
+      xiMang1: r[8],
+      xiMang2: r[9],
+      nuoc: r[10],
+      pg1: r[11],
+      pg2: r[12]
+    });
+  }
+
+  return result;
+}
+
+// Thêm mới, hoặc cập nhật (nếu đã tồn tại đúng khách hàng + dự án + mác +
+// độ sụt) 1 dòng cấp phối vào sheet CAP_PHOI.
+function themCapPhoi(maNguoiDung, form) {
+  if (!laKyThuat_(maNguoiDung)) {
+    return {success:false, message:"Bạn không có quyền Kỹ Thuật."};
+  }
+
+  form = form || {};
+
+  const khachHang = text_(form.khachHang);
+  const duAn = text_(form.duAn);
+  const mac = text_(form.mac);
+  const doSut = text_(form.doSut);
+
+  if (!khachHang) return {success:false, message:"Vui lòng chọn khách hàng."};
+  if (!duAn) return {success:false, message:"Vui lòng chọn dự án."};
+  if (!mac) return {success:false, message:"Vui lòng nhập Mác bê tông."};
+  if (!doSut) return {success:false, message:"Vui lòng nhập Độ sụt."};
+
+  const vals = [
+    num_(form.cat1),
+    num_(form.da1),
+    num_(form.da2),
+    num_(form.cat2),
+    num_(form.xiMang1),
+    num_(form.xiMang2),
+    num_(form.nuoc),
+    num_(form.pg1),
+    num_(form.pg2)
+  ];
+
+  const sh = ensureCapPhoiSheet_();
+  const data = sh.getLastRow() >= 2 ? sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues() : [];
+
+  let row = 0;
+  for (let i = 0; i < data.length; i++) {
+    if (
+      key_(data[i][0]) === key_(khachHang) &&
+      key_(data[i][1]) === key_(duAn) &&
+      key_(data[i][2]) === key_(mac) &&
+      key_(data[i][3]) === key_(doSut)
+    ) {
+      row = i + 2;
+      break;
+    }
+  }
+
+  if (row) {
+    sh.getRange(row, 5, 1, 9).setValues([vals]);
+    return {success:true, message:"Đã cập nhật cấp phối."};
+  }
+
+  sh.appendRow([khachHang, duAn, mac, doSut].concat(vals));
+  return {success:true, message:"Đã thêm cấp phối mới."};
 }
 
 
