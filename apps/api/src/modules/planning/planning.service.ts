@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { checkHourlyCapacity, materialDemand } from '@rmc-ms/business-rules';
+import {
+  assertBranchScope,
+  checkHourlyCapacity,
+  isInBranchScope,
+  materialDemand,
+  UserBranchScope,
+} from '@rmc-ms/business-rules';
 import { PlanLine, ProductionPlan, ProductionPlanStatus } from '@rmc-ms/shared-types';
 import { randomUUID } from 'crypto';
 import { OrderService } from '../order/order.service';
@@ -20,7 +26,9 @@ export class PlanningService {
 
   constructor(private readonly orderService: OrderService) {}
 
-  createPlan(dto: CreatePlanDto): ProductionPlan {
+  createPlan(dto: CreatePlanDto, scope: UserBranchScope): ProductionPlan {
+    assertBranchScope(dto.branchId, scope);
+
     const plan: ProductionPlan = {
       id: randomUUID(),
       branchId: dto.branchId,
@@ -34,22 +42,23 @@ export class PlanningService {
     return plan;
   }
 
-  findOne(planId: string): { plan: ProductionPlan; lines: PlanLine[] } {
+  findOne(planId: string, scope: UserBranchScope): { plan: ProductionPlan; lines: PlanLine[] } {
     const plan = this.plans.get(planId);
     if (!plan) throw new NotFoundException(`Khong tim thay ke hoach ${planId}`);
+    assertBranchScope(plan.branchId, scope);
     return { plan, lines: this.linesByPlan.get(planId) ?? [] };
   }
 
-  findAll(): ProductionPlan[] {
-    return Array.from(this.plans.values());
+  findAll(scope: UserBranchScope): ProductionPlan[] {
+    return Array.from(this.plans.values()).filter((p) => isInBranchScope(p.branchId, scope));
   }
 
   /**
    * BRULE-03: khong xac nhan khi khung gio vuot 100% cong suat tram, tru khi
    * nguoi dung chap nhan va ghi ly do (canh bao, khong tu dong chan cung nhu BRULE-02).
    */
-  addLine(planId: string, dto: AddPlanLineDto): { line: PlanLine; capacityWarning: string | null } {
-    const { plan, lines } = this.findOne(planId);
+  addLine(planId: string, dto: AddPlanLineDto, scope: UserBranchScope): { line: PlanLine; capacityWarning: string | null } {
+    const { plan, lines } = this.findOne(planId, scope);
     if (plan.status !== ProductionPlanStatus.DRAFT) {
       throw new BadRequestException('Chi duoc them dong vao ke hoach dang o trang thai Nhap');
     }
@@ -98,15 +107,15 @@ export class PlanningService {
    * O day dung proxy don gian: Order.mixDesignId phai duoc gan (mixdesign module
    * that se kiem tra ca trang thai "Hieu luc" khi duoc trien khai).
    */
-  lockPlan(planId: string): ProductionPlan {
-    const { plan, lines } = this.findOne(planId);
+  lockPlan(planId: string, scope: UserBranchScope): ProductionPlan {
+    const { plan, lines } = this.findOne(planId, scope);
 
     if (lines.length === 0) {
       throw new BadRequestException('Khong the chot ke hoach rong - chua co dong nao');
     }
 
     const missingMixDesign = lines.filter((line) => {
-      const order = this.orderService.findOne(line.orderId);
+      const order = this.orderService.findOne(line.orderId, scope);
       return !order.mixDesignId;
     });
 
@@ -125,8 +134,9 @@ export class PlanningService {
   materialDemandForPlan(
     planId: string,
     qtyPerM3ByMaterialByOrder: Record<string, Record<string, number>>,
+    scope: UserBranchScope,
   ): Record<string, number> {
-    const { lines } = this.findOne(planId);
+    const { lines } = this.findOne(planId, scope);
     return materialDemand(
       lines.map((line) => ({
         volumeM3: line.volumeM3,

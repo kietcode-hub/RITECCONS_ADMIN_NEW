@@ -10,11 +10,35 @@ import {
   ProductionPlanStatus,
   PumpMethod,
   TripStatus,
+  UserRole,
   VehicleStatus,
 } from './enums';
 
 export interface BranchScoped {
   branchId: string;
+}
+
+/** E-04 User. Pham vi chi nhanh dung chung dinh dang voi UserBranchScope
+ * trong @rmc-ms/business-rules (branchScope.ts) de truyen thang khong can map lai. */
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  passwordHash: string;
+  role: UserRole;
+  isCompanyWide: boolean; // true cho EXECUTIVE - xem duoc toan cong ty (BRULE-17)
+  branchIds: string[]; // cac chi nhanh duoc gan (FR-M01-04) - rong neu isCompanyWide
+  isActive: boolean;
+}
+
+/** E-06 Delegation (Uy quyen tam thoi) */
+export interface Delegation {
+  id: string;
+  delegatorUserId: string;
+  delegateUserId: string;
+  scope: string; // vd "Phe duyet cap phoi (M06)"
+  fromDate: string; // ISO date
+  toDate: string; // ISO date
 }
 
 /** E-02 Branch */

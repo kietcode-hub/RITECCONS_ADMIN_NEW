@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RMC-MS Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F1F5F9;
+    --surface: #FFFFFF;
+    --surface-2: #F8FAFC;
+    --text: #0F172A;
+    --text-muted: #475569;
+    --text-faint: #94A3B8;
+    --border: #E2E8F0;
+    --primary: #1E40AF;
+    --primary-fg: #FFFFFF;
+    --primary-soft: #DBEAFE;
+    --accent: #D97706;
+    --accent-soft: #FEF3C7;
+    --success: #16A34A;
+    --success-soft: #DCFCE7;
+    --danger: #DC2626;
+    --danger-soft: #FEE2E2;
+    --shadow: 0 1px 2px rgba(15,23,42,.06), 0 1px 1px rgba(15,23,42,.04);
+    --radius: 14px;
+
+    /* Bang mau gradient trang tri rieng cho KPI hero - dong bo voi app-shell-16-modules.html */
+    --grad-orange-1: #FF9A6C; --grad-orange-2: #FF6B4A;
+    --grad-green-1: #4ADE80;  --grad-green-2: #16A34A;
+    --grad-pink-1: #FB7185;   --grad-pink-2: #E11D48;
+    --grad-teal-1: #2DD4BF;   --grad-teal-2: #0D9488;
+    --grad-purple-1: #A78BFA; --grad-purple-2: #7C3AED;
+    --grad-shadow: 0 10px 24px -8px rgba(30,37,65,.35);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0B1220; --surface: #131B2E; --surface-2: #101728;
+      --text: #F1F5F9; --text-muted: #A8B3C7; --text-faint: #64748B;
+      --border: #253150; --primary: #4F7DF3; --primary-fg: #06101F; --primary-soft: #1B2A4E;
+      --accent: #F5A524; --accent-soft: #2E2410;
+      --success: #34D399; --success-soft: #0F2A20;
+      --danger: #F87171; --danger-soft: #351515;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B1220; --surface: #131B2E; --surface-2: #101728;
+    --text: #F1F5F9; --text-muted: #A8B3C7; --text-faint: #64748B;
+    --border: #253150; --primary: #4F7DF3; --primary-fg: #06101F; --primary-soft: #1B2A4E;
+    --accent: #F5A524; --accent-soft: #2E2410;
+    --success: #34D399; --success-soft: #0F2A20;
+    --danger: #F87171; --danger-soft: #351515;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 16px 16px 90px; }
+
+  /* ---------- top bar ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 4px 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .mark {
+    width: 34px; height: 34px; border-radius: 9px; background: var(--primary); color: var(--primary-fg);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .brand .name { font-weight: 700; font-size: 15px; line-height: 1.2; }
+  .brand .sub { font-size: 12px; color: var(--text-muted); }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .badge-live {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--success);
+    background: var(--success-soft); border-radius: 999px; padding: 5px 10px 5px 8px;
+  }
+  .badge-live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+
+  .datebar { font-size: 13px; color: var(--text-muted); padding: 0 4px 14px; }
+  .datebar strong { color: var(--text); }
+
+  section { margin-bottom: 24px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 4px 10px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 15px; margin: 0; font-weight: 700; }
+  .section-head .head-right { display: flex; align-items: center; gap: 10px; }
+  .section-head .hint { font-size: 12px; color: var(--text-faint); }
+  .export-btn {
+    font-size: 11.5px; font-weight: 700; color: var(--primary); background: var(--primary-soft);
+    border: none; border-radius: 999px; padding: 5px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+  }
+
+  /* ---------- segmented controls ---------- */
+  .segctl { display: inline-flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+  .segctl button {
+    border: none; background: transparent; color: var(--text-muted); font-size: 12px; font-weight: 600;
+    padding: 7px 11px; border-radius: 7px; cursor: pointer; min-height: 32px;
+  }
+  .segctl button.active { background: var(--primary); color: var(--primary-fg); }
+  .filter-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 0 4px 12px; }
+  .filter-row .filter-label { font-size: 11.5px; color: var(--text-faint); margin-right: 6px; }
+  .filter-group { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
+  select.mini-select {
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    border-radius: 8px; padding: 7px 9px; font-size: 12px; font-weight: 600; min-height: 32px;
+  }
+
+  /* ---------- KPI cards ---------- */
+  .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 640px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .kpi-grid { grid-template-columns: repeat(6, 1fr); } }
+  .kpi { background: var(--surface); border-radius: var(--radius); box-shadow: var(--grad-shadow); overflow: hidden; }
+  .kpi-top { padding: 15px 15px 13px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .kpi-value { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; }
+  .kpi-value small { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .kpi-label { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; min-height: 28px; }
+  .kpi-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .kpi-foot { padding: 8px 15px; font-size: 11px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+  .kpi-foot .arrow { font-size: 12px; }
+
+  .kpi-orange .kpi-value, .kpi-orange .kpi-icon { color: var(--grad-orange-2); }
+  .kpi-orange .kpi-icon { background: color-mix(in srgb, var(--grad-orange-2) 14%, transparent); }
+  .kpi-orange .kpi-foot { background: linear-gradient(90deg, var(--grad-orange-1), var(--grad-orange-2)); }
+
+  .kpi-green .kpi-value, .kpi-green .kpi-icon { color: var(--grad-green-2); }
+  .kpi-green .kpi-icon { background: color-mix(in srgb, var(--grad-green-2) 14%, transparent); }
+  .kpi-green .kpi-foot { background: linear-gradient(90deg, var(--grad-green-1), var(--grad-green-2)); }
+
+  .kpi-teal .kpi-value, .kpi-teal .kpi-icon { color: var(--grad-teal-2); }
+  .kpi-teal .kpi-icon { background: color-mix(in srgb, var(--grad-teal-2) 14%, transparent); }
+  .kpi-teal .kpi-foot { background: linear-gradient(90deg, var(--grad-teal-1), var(--grad-teal-2)); }
+
+  .kpi-pink .kpi-value, .kpi-pink .kpi-icon { color: var(--grad-pink-2); }
+  .kpi-pink .kpi-icon { background: color-mix(in srgb, var(--grad-pink-2) 14%, transparent); }
+  .kpi-pink .kpi-foot { background: linear-gradient(90deg, var(--grad-pink-1), var(--grad-pink-2)); }
+
+  .kpi-purple .kpi-value, .kpi-purple .kpi-icon { color: var(--grad-purple-2); }
+  .kpi-purple .kpi-icon { background: color-mix(in srgb, var(--grad-purple-2) 14%, transparent); }
+  .kpi-purple .kpi-foot { background: linear-gradient(90deg, var(--grad-purple-1), var(--grad-purple-2)); }
+
+  /* ---------- branch comparison ---------- */
+  .branch-card {
+    background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--border);
+    border-radius: var(--radius); padding: 13px 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+    cursor: pointer; transition: box-shadow .15s ease;
+  }
+  .branch-card[data-status="ok"] { border-left-color: var(--success); }
+  .branch-card[data-status="warn"] { border-left-color: var(--danger); }
+  .branch-card.selected { box-shadow: 0 0 0 2px var(--primary), var(--shadow); }
+  .branch-row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .branch-name { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .status-pill.ok { color: var(--success); background: var(--success-soft); }
+  .status-pill.warn { color: var(--danger); background: var(--danger-soft); }
+  .branch-figs { text-align: right; }
+  .branch-figs .m3 { font-weight: 800; font-size: 15px; }
+  .branch-figs .pct { font-size: 11.5px; color: var(--text-muted); }
+  .branch-bar { height: 6px; border-radius: 999px; background: var(--surface-2); margin: 10px 0; overflow: hidden; }
+  .branch-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--primary); }
+  .branch-card[data-status="warn"] .branch-bar > span { background: var(--danger); }
+  .branch-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .branch-metrics b { display: block; color: var(--text); font-size: 12.5px; font-weight: 700; }
+  .branch-detail {
+    display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);
+    font-size: 12.5px; color: var(--text-muted); line-height: 1.6;
+  }
+  .branch-card.open .branch-detail { display: block; }
+  .branch-detail .flag { color: var(--danger); font-weight: 600; }
+  .branch-card .chev { transition: transform .2s ease; color: var(--text-faint); font-size: 12px; display: inline-block; }
+  .branch-card.open .chev { transform: rotate(180deg); }
+
+  /* ---------- trend chart ---------- */
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 14px 12px; box-shadow: var(--shadow); }
+  .legend { display: flex; gap: 14px; font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
+  .chart-callout {
+    margin-top: 10px; font-size: 12px; border-radius: 9px; padding: 8px 10px; display: flex; gap: 6px; align-items: flex-start;
+  }
+  .chart-callout.warn { color: var(--danger); background: var(--danger-soft); }
+  .chart-callout.ok { color: var(--success); background: var(--success-soft); }
+
+  /* ---------- fleet table ---------- */
+  .fleet-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .fleet-table th { text-align: left; font-size: 11px; color: var(--text-faint); font-weight: 600; padding: 0 8px 8px; }
+  .fleet-table td { padding: 10px 8px; border-top: 1px solid var(--border); vertical-align: middle; }
+  .fleet-table td.num { font-weight: 700; }
+  .fleet-table .mini-link {
+    background: none; border: none; color: var(--primary); font-weight: 700; font-size: 12px; cursor: pointer; padding: 6px 0;
+  }
+  .avail-bar { display: inline-flex; align-items: center; gap: 6px; }
+  .avail-bar .track { width: 46px; height: 5px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .avail-bar .track > span { display: block; height: 100%; background: var(--success); }
+
+  /* ---------- approvals ---------- */
+  .approval-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .approval-type {
+    font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
+    padding: 3px 8px; border-radius: 999px; display: inline-block; margin-bottom: 6px;
+  }
+  .approval-title { font-weight: 700; font-size: 14px; }
+  .approval-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .approval-figs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0;
+    font-size: 12px; background: var(--surface-2); border-radius: 10px; padding: 10px;
+  }
+  .approval-figs div span { display: block; color: var(--text-faint); font-size: 11px; }
+  .approval-figs div b { font-size: 13px; }
+  .approval-reason { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 10px; }
+  .approval-actions { display: flex; gap: 8px; }
+  .btn { flex: 1; border: none; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 700; cursor: pointer; min-height: 44px; }
+  .btn-approve { background: var(--success); color: #fff; }
+  .btn-reject { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .decided-banner {
+    display: none; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700;
+    padding: 9px 10px; border-radius: 9px; margin-top: 2px;
+  }
+  .approval-card.decided .approval-actions { display: none; }
+  .approval-card.decided .decided-banner { display: flex; }
+  .decided-banner.approve { color: var(--success); background: var(--success-soft); }
+  .decided-banner.reject { color: var(--danger); background: var(--danger-soft); }
+
+  /* ---------- ops alerts ---------- */
+  .alert-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 4px; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: var(--danger); }
+  .alert-row.info .alert-dot { background: var(--accent); }
+  .alert-branch { font-weight: 700; color: var(--text-muted); margin-right: 4px; }
+
+  /* ---------- modal ---------- */
+  .overlay { position: fixed; inset: 0; background: rgba(15,23,42,.5); display: none; align-items: flex-end; justify-content: center; z-index: 50; padding: 0; }
+  .overlay.show { display: flex; }
+  .modal { background: var(--surface); width: 100%; max-width: 480px; border-radius: 18px 18px 0 0; padding: 18px; box-shadow: 0 -8px 30px rgba(0,0,0,.2); max-height: 88vh; overflow-y: auto; }
+  @media (min-width: 640px) { .overlay { align-items: center; } .modal { border-radius: var(--radius); } }
+  .modal h3 { margin: 0 0 4px; font-size: 15px; }
+  .modal p { margin: 0 0 12px; font-size: 12.5px; color: var(--text-muted); }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+  .field select, .field input, .field textarea {
+    width: 100%; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+    padding: 9px 10px; font-size: 13px; font-family: inherit;
+  }
+  .field textarea { min-height: 70px; resize: vertical; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* ---------- toast ---------- */
+  .toast-container { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 90; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast {
+    background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 12.5px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.25); opacity: 0; transform: translateY(8px); transition: all .25s ease; max-width: 86vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  footer.note { text-align: center; font-size: 11px; color: var(--text-faint); padding-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">RM</div>
+      <div>
+        <div class="name">Dashboard hợp nhất</div>
+        <div class="sub">RMC-MS · 3 chi nhánh</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-live"><span class="dot"></span>T+0</span>
+      <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌙</button>
+    </div>
+  </div>
+  <div class="datebar">Thứ Ba, <strong>15/09/2026</strong> · dữ liệu cập nhật 07:02 sáng nay</div>
+
+  <!-- SCOPE SELECTOR -->
+  <div class="filter-row">
+    <div class="filter-group">
+      <span class="filter-label">Xem theo</span>
+      <div class="segctl" id="scopeCtl">
+        <button data-scope="total" class="active">Toàn công ty</button>
+        <button data-scope="cn1">CN1</button>
+        <button data-scope="cn2">CN2</button>
+        <button data-scope="cn3">CN3</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Kỳ</span>
+      <div class="segctl" id="periodCtl">
+        <button data-period="yesterday" class="active">Hôm qua</button>
+        <button data-period="month">Tháng này</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI HERO -->
+  <section aria-label="Chỉ số tổng quan">
+    <div class="section-head">
+      <h2 id="kpiHeading">Chỉ số — Toàn công ty</h2>
+      <span class="hint" id="kpiPeriodHint">Hôm qua</span>
+    </div>
+    <div class="kpi-grid" id="kpiGrid"><!-- render bằng JS --></div>
+  </section>
+
+  <!-- SO SANH 3 CHI NHANH -->
+  <section aria-label="So sánh 3 chi nhánh">
+    <div class="section-head">
+      <h2>So sánh chi nhánh</h2>
+      <div class="head-right">
+        <span class="hint">Chạm để xem chi tiết</span>
+        <button class="export-btn" onclick="toast('Đã tạo file Excel so sánh chi nhánh (demo — FR-M14-01)')">⬇ Excel</button>
+      </div>
+    </div>
+
+    <div class="branch-card" data-status="ok" data-branch="cn1" onclick="this.classList.toggle('open')">
+      <div class="branch-row-top">
+        <div class="branch-name">CN1 — Trung tâm <span class="status-pill ok">Đạt KH</span></div>
+        <div class="branch-figs"><div class="m3">680 m³</div><div class="pct">105% kế hoạch</div></div>
+      </div>
+      <div class="branch-bar"><span style="width:100%"></span></div>
+      <div class="branch-metrics">
+        <div>Giá BQ/m³<b>1.515k</b></div>
+        <div>Chuyến/xe/ngày<b>4,1</b></div>
+        <div>Mẫu đạt<b>98%</b></div>
+        <div>DSO<b>41 ngày</b></div>
+      </div>
+      <span class="chev">▾ chi tiết</span>
+      <div class="branch-detail">Vượt kế hoạch nhờ 2 công trình lớn đổ móng liên tục trong tuần. Không có sự cố đáng kể.</div>
+    </div>
+
+    <div class="branch-card" data-status="warn" data-branch="cn2" onclick="this.classList.toggle('open')">
+      <div class="branch-row-top">
+        <div class="branch-name">CN2 — Bình Dương <span class="status-pill warn">Thấp hơn KH 18%</span></div>
+        <div class="branch-figs"><div class="m3">512 m³</div><div class="pct">82% kế hoạch</div></div>
+      </div>
+      <div class="branch-bar"><span style="width:82%"></span></div>
+      <div class="branch-metrics">
+        <div>Giá BQ/m³<b>1.487k</b></div>
+        <div>Chuyến/xe/ngày<b>3,2</b></div>
+        <div>Mẫu đạt<b>96%</b></div>
+        <div>DSO<b>52 ngày</b></div>
+      </div>
+      <span class="chev">▾ chi tiết</span>
+      <div class="branch-detail">
+        <span class="flag">⚠ 4 chuyến hủy</span> do sự cố xe (29H-123.45 hỏng bơm thủy lực), và
+        <span class="flag">1 đơn dừng</span> vì khách chưa sẵn sàng mặt bằng. DSO cao hơn trung bình công ty 11 ngày — cần theo dõi thu hồi công nợ.
+      </div>
+    </div>
+
+    <div class="branch-card" data-status="ok" data-branch="cn3" onclick="this.classList.toggle('open')">
+      <div class="branch-row-top">
+        <div class="branch-name">CN3 — Miền Đông <span class="status-pill ok">Sát KH</span></div>
+        <div class="branch-figs"><div class="m3">648 m³</div><div class="pct">98% kế hoạch</div></div>
+      </div>
+      <div class="branch-bar"><span style="width:98%"></span></div>
+      <div class="branch-metrics">
+        <div>Giá BQ/m³<b>1.503k</b></div>
+        <div>Chuyến/xe/ngày<b>3,9</b></div>
+        <div>Mẫu đạt<b>99%</b></div>
+        <div>DSO<b>38 ngày</b></div>
+      </div>
+      <span class="chev">▾ chi tiết</span>
+      <div class="branch-detail">Vận hành ổn định. Giá bán bình quân đang trong xu hướng giảm 30 ngày qua — xem biểu đồ bên dưới.</div>
+    </div>
+  </section>
+
+  <!-- TREND -->
+  <section aria-label="Xu hướng giá bán bình quân">
+    <div class="section-head">
+      <h2>Xu hướng giá bán bình quân/m³</h2>
+      <button class="export-btn" onclick="toast('Đã tạo file Excel biểu đồ giá (demo — FR-M14-01)')">⬇ Excel</button>
+    </div>
+    <div class="filter-row" style="padding-top:0">
+      <div class="filter-group">
+        <span class="filter-label">Mác</span>
+        <select class="mini-select" id="macSelect">
+          <option value="all">Tất cả mác (bình quân)</option>
+          <option value="m200">M200</option>
+          <option value="m250">M250</option>
+          <option value="m300">M300</option>
+          <option value="m350">M350</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Khung thời gian</span>
+        <div class="segctl" id="rangeCtl">
+          <button data-range="7" class="">7 ngày</button>
+          <button data-range="30" class="active">30 ngày</button>
+          <button data-range="90" class="">90 ngày</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="legend">
+        <span><i style="background:var(--primary)"></i>CN1</span>
+        <span><i style="background:var(--text-faint)"></i>CN2</span>
+        <span><i style="background:var(--accent)"></i>CN3</span>
+      </div>
+      <svg viewBox="0 0 300 100" width="100%" height="140" preserveAspectRatio="none" role="img" aria-label="Biểu đồ đường giá bán bình quân theo m3 của 3 chi nhánh" id="trendSvg">
+        <line x1="10" y1="97" x2="290" y2="97" stroke="var(--border)" stroke-width="1"/>
+        <polyline id="lineCn1" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline id="lineCn2" fill="none" stroke="var(--text-faint)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5"/>
+        <polyline id="lineCn3" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle id="dotCn1" r="3.2" fill="var(--primary)"/>
+        <circle id="dotCn2" r="3.2" fill="var(--text-faint)"/>
+        <circle id="dotCn3" r="3.2" fill="var(--accent)"/>
+      </svg>
+      <div class="chart-callout" id="trendCallout"></div>
+    </div>
+  </section>
+
+  <!-- APPROVALS -->
+  <section aria-label="Chờ duyệt">
+    <div class="section-head">
+      <h2>Chờ duyệt <span id="pendingCount" style="color:var(--danger)">· 2</span></h2>
+      <button class="export-btn" onclick="toast('Đã tạo file Excel danh sách chờ duyệt (demo — FR-M14-01)')">⬇ Excel</button>
+    </div>
+
+    <div class="approval-card" id="ap1">
+      <div class="approval-type">Giá dưới sàn — sâu</div>
+      <div class="approval-top">
+        <div>
+          <div class="approval-title">Công ty TNHH Xây dựng ABC</div>
+          <div class="approval-sub">CN3 · NVKD: Nguyễn Văn Hùng · Công trình Vinhomes GĐ2</div>
+        </div>
+      </div>
+      <div class="approval-figs">
+        <div><span>Giá đề xuất</span><b>1.120.000 đ/m³</b></div>
+        <div><span>Giá sàn</span><b style="color:var(--danger)">1.150.000 đ/m³</b></div>
+        <div><span>Chênh lệch</span><b style="color:var(--danger)">−2,6%</b></div>
+        <div><span>Khối lượng</span><b>800 m³</b></div>
+      </div>
+      <div class="approval-reason">"Khách chiến lược, cam kết 3 công trình tiếp theo trong quý." — NVKD ghi chú</div>
+      <div class="approval-actions">
+        <button class="btn btn-reject" onclick="openDecisionModal('ap1','reject')">Từ chối</button>
+        <button class="btn btn-approve" onclick="openDecisionModal('ap1','approve')">Duyệt</button>
+      </div>
+      <div class="decided-banner approve">✓ Đã duyệt lúc <span class="ts"></span></div>
+      <div class="decided-banner reject">✕ Đã từ chối lúc <span class="ts"></span></div>
+    </div>
+
+    <div class="approval-card" id="ap2">
+      <div class="approval-type">Hạn mức công nợ</div>
+      <div class="approval-top">
+        <div>
+          <div class="approval-title">Công ty CP Đầu tư XYZ</div>
+          <div class="approval-sub">CN1 · NVKD: Trần Thị Mai</div>
+        </div>
+      </div>
+      <div class="approval-figs">
+        <div><span>Hạn mức hiện tại</span><b>1,5 tỷ ₫</b></div>
+        <div><span>Hạn mức đề xuất</span><b>3,0 tỷ ₫</b></div>
+        <div><span>Lịch sử thanh toán</span><b style="color:var(--success)">Đúng hạn 95%</b></div>
+        <div><span>Số ngày nợ</span><b>45 ngày</b></div>
+      </div>
+      <div class="approval-reason">"Khách mở rộng dự án, đã có 2 công trình đang chạy đúng tiến độ thanh toán." — GĐ CN1 đề xuất</div>
+      <div class="approval-actions">
+        <button class="btn btn-reject" onclick="openDecisionModal('ap2','reject')">Từ chối</button>
+        <button class="btn btn-approve" onclick="openDecisionModal('ap2','approve')">Duyệt</button>
+      </div>
+      <div class="decided-banner approve">✓ Đã duyệt lúc <span class="ts"></span></div>
+      <div class="decided-banner reject">✕ Đã từ chối lúc <span class="ts"></span></div>
+    </div>
+  </section>
+
+  <!-- FLEET / RESOURCE -->
+  <section aria-label="Nguồn lực đội xe 3 chi nhánh">
+    <div class="section-head">
+      <h2>Nguồn lực đội xe — 3 chi nhánh</h2>
+      <span class="hint">UR-BLD-06</span>
+    </div>
+    <div class="chart-card" style="padding:12px 10px;overflow-x:auto">
+      <table class="fleet-table">
+        <thead><tr><th>Chi nhánh</th><th>Xe mixer</th><th>Xe bơm</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>CN1 — Trung tâm</td>
+            <td><span class="avail-bar"><span class="num">9/10</span><span class="track"><span style="width:90%"></span></span></span></td>
+            <td><span class="avail-bar"><span class="num">2/2</span><span class="track"><span style="width:100%"></span></span></span></td>
+            <td><button class="mini-link" onclick="openTransferModal('CN1 — Trung tâm')">Điều chuyển →</button></td>
+          </tr>
+          <tr>
+            <td>CN2 — Bình Dương</td>
+            <td><span class="avail-bar"><span class="num">7/9</span><span class="track"><span style="width:78%;background:var(--accent)"></span></span></span></td>
+            <td><span class="avail-bar"><span class="num">1/2</span><span class="track"><span style="width:50%;background:var(--danger)"></span></span></span></td>
+            <td><button class="mini-link" onclick="openTransferModal('CN2 — Bình Dương')">Điều chuyển →</button></td>
+          </tr>
+          <tr>
+            <td>CN3 — Miền Đông</td>
+            <td><span class="avail-bar"><span class="num">8/9</span><span class="track"><span style="width:89%"></span></span></span></td>
+            <td><span class="avail-bar"><span class="num">2/2</span><span class="track"><span style="width:100%"></span></span></span></td>
+            <td><button class="mini-link" onclick="openTransferModal('CN3 — Miền Đông')">Điều chuyển →</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- OPS ALERTS -->
+  <section aria-label="Cảnh báo vận hành">
+    <div class="section-head"><h2>Cảnh báo vận hành hôm nay</h2></div>
+    <div class="chart-card" style="padding:6px 14px;">
+      <div class="alert-row">
+        <span class="alert-dot"></span>
+        <div><span class="alert-branch">CN2</span>Xe 29H-123.45 hỏng bơm thủy lực — 2 chuyến đã chuyển sang xe khác.</div>
+      </div>
+      <div class="alert-row info">
+        <span class="alert-dot"></span>
+        <div><span class="alert-branch">CN1</span>1 tổ mẫu R28 không đạt cường độ thiết kế — đang điều tra lô cát nhập ngày 05/09.</div>
+      </div>
+      <div class="alert-row info">
+        <span class="alert-dot"></span>
+        <div><span class="alert-branch">CN3</span>Tồn xi măng còn 1,4 ngày — đề nghị mua đã được Kế hoạch gửi duyệt.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="note">Bản mock UI — dữ liệu minh hoạ, đối chiếu UR-BLD-01…06 · PR-M14-09/11 (RMC-MS)</footer>
+</div>
+
+<!-- DECISION MODAL (duyet / tu choi) -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Duyệt đề nghị</h3>
+    <p id="modalSub">Ghi chú sẽ được lưu vào nhật ký hệ thống (audit log).</p>
+    <div class="field"><textarea id="modalNote" placeholder="Ghi chú (không bắt buộc)…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-reject" onclick="closeModal('overlay')">Huỷ</button>
+      <button class="btn btn-approve" id="modalConfirm" onclick="confirmModal()">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSFER MODAL (de nghi dieu chuyen xe/bom) -->
+<div class="overlay" id="transferOverlay">
+  <div class="modal">
+    <h3>Đề nghị điều chuyển</h3>
+    <p id="transferSub">Từ CN — chọn chi nhánh đích và số lượng cần điều chuyển.</p>
+    <div class="field">
+      <label>Loại nguồn lực</label>
+      <select id="transferType"><option value="Xe mixer">Xe mixer</option><option value="Xe bơm">Xe bơm</option></select>
+    </div>
+    <div class="field">
+      <label>Chi nhánh đích</label>
+      <select id="transferDest"></select>
+    </div>
+    <div class="field">
+      <label>Số lượng</label>
+      <input type="number" id="transferQty" min="1" value="1">
+    </div>
+    <div class="field">
+      <label>Lý do</label>
+      <textarea id="transferReason" placeholder="Vd: Bù thiếu xe do 2 xe đang bảo dưỡng…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-reject" onclick="closeModal('transferOverlay')">Huỷ</button>
+      <button class="btn btn-approve" onclick="submitTransfer()">Gửi đề nghị</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  /* ================= THEME TOGGLE ================= */
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+    function currentIsDark() {
+      var explicit = root.getAttribute('data-theme');
+      if (explicit === 'dark') return true;
+      if (explicit === 'light') return false;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function sync() { btn.textContent = currentIsDark() ? '☀️' : '🌙'; }
+    btn.addEventListener('click', function () {
+      root.setAttribute('data-theme', currentIsDark() ? 'light' : 'dark');
+      sync();
+    });
+    sync();
+  })();
+
+  /* ================= TOAST ================= */
+  function toast(msg) {
+    var container = document.getElementById('toastContainer');
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    container.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add('show'); });
+    setTimeout(function () {
+      el.classList.remove('show');
+      setTimeout(function () { el.remove(); }, 300);
+    }, 2600);
+  }
+
+  /* ================= DATA ================= */
+  var PERIODS = {
+    yesterday: {
+      label: 'Hôm qua', cmp: 'so hôm trước',
+      branches: {
+        total: { m3: 1840, m3d: 6.2, rev: 2.76, revUnit: 'tỷ ₫', revd: 4.8, price: 1502, priced: -1.8 },
+        cn1:   { m3: 680,  m3d: 8.0, rev: 1.03, revUnit: 'tỷ ₫', revd: 6.5, price: 1515, priced: 0.5 },
+        cn2:   { m3: 512,  m3d: -10.0, rev: 0.76, revUnit: 'tỷ ₫', revd: -7.2, price: 1487, priced: -2.1 },
+        cn3:   { m3: 648,  m3d: 3.0, rev: 0.97, revUnit: 'tỷ ₫', revd: 2.1, price: 1503, priced: -2.1 }
+      }
+    },
+    month: {
+      label: 'Tháng 09/2026 (đến 15/09)', cmp: 'so cùng kỳ tháng trước',
+      branches: {
+        total: { m3: 26730, m3d: 2.1, rev: 40.1, revUnit: 'tỷ ₫', revd: 1.8, price: 1497, priced: -1.5 },
+        cn1:   { m3: 9180,  m3d: 5.0, rev: 13.9, revUnit: 'tỷ ₫', revd: 4.0, price: 1509, priced: -0.3 },
+        cn2:   { m3: 7830,  m3d: -8.0, rev: 11.6, revUnit: 'tỷ ₫', revd: -6.0, price: 1481, priced: -1.9 },
+        cn3:   { m3: 9720,  m3d: 2.0, rev: 14.6, revUnit: 'tỷ ₫', revd: 1.0, price: 1499, priced: -2.0 }
+      }
+    }
+  };
+
+  // Snapshot: khong doi theo ky xem (cong no, bien LN, doi xe la trang thai hien tai)
+  var SNAPSHOT = {
+    total: { name: 'Toàn công ty', debt: 340, debtUnit: 'tr ₫', debtCount: 12, margin: 285 },
+    cn1:   { name: 'CN1 — Trung tâm', debt: 95,  debtUnit: 'tr ₫', debtCount: 3, margin: 298 },
+    cn2:   { name: 'CN2 — Bình Dương', debt: 180, debtUnit: 'tr ₫', debtCount: 6, margin: 262 },
+    cn3:   { name: 'CN3 — Miền Đông', debt: 65,  debtUnit: 'tr ₫', debtCount: 3, margin: 305 }
+  };
+
+  var MAC_BASE = {
+    all:  { cn1: 1515, cn2: 1487, cn3: 1503 },
+    m200: { cn1: 1280, cn2: 1255, cn3: 1268 },
+    m250: { cn1: 1400, cn2: 1375, cn3: 1390 },
+    m300: { cn1: 1515, cn2: 1487, cn3: 1503 },
+    m350: { cn1: 1650, cn2: 1620, cn3: 1635 }
+  };
+  var CN_TREND_PCT_30D = { cn1: 0.5, cn2: -2.1, cn3: -2.1 };
+
+  var state = { scope: 'total', period: 'yesterday', mac: 'all', range: 30 };
+
+  /* ================= FORMAT HELPERS ================= */
+  function fmt0(n) { return Math.round(n).toLocaleString('vi-VN'); }
+  function fmt1(n) { return n.toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+
+  /* ================= KPI RENDER ================= */
+  function renderKpis() {
+    var per = PERIODS[state.period];
+    var b = per.branches[state.scope];
+    var s = SNAPSHOT[state.scope];
+
+    document.getElementById('kpiHeading').textContent = 'Chỉ số — ' + s.name;
+    document.getElementById('kpiPeriodHint').textContent = per.label;
+
+    var cards = [
+      { label: 'Sản lượng', value: fmt0(b.m3), unit: 'm³', delta: b.m3d, cmp: per.cmp, color: 'orange', icon: '🚚' },
+      { label: 'Doanh thu', value: fmt1(b.rev), unit: b.revUnit, delta: b.revd, cmp: per.cmp, color: 'green', icon: '💰' },
+      { label: 'Giá bán bình quân/m³', value: fmt0(b.price), unit: 'k ₫', delta: b.priced, cmp: '30 ngày', color: 'teal', icon: '📈' },
+      { label: 'Công nợ quá hạn', value: fmt0(s.debt), unit: s.debtUnit, footText: s.debtCount + ' khách hàng', color: 'pink', icon: '🧾' },
+      { label: 'Biên LN gộp/m³ (ước tính)', value: fmt0(s.margin), unit: 'k ₫', footText: 'giá bán − giá thành sơ bộ', color: 'purple', icon: '💹' }
+    ];
+
+    var html = cards.map(function (c) {
+      var footHtml;
+      if (c.footText) {
+        footHtml = '<span>' + c.footText + '</span><span class="arrow"></span>';
+      } else {
+        var isUp = c.delta >= 0;
+        footHtml = '<span>' + fmt1(Math.abs(c.delta)) + '% ' + c.cmp + '</span><span class="arrow">' + (isUp ? '▲' : '▼') + '</span>';
+      }
+      return '<div class="kpi kpi-' + c.color + '">' +
+        '<div class="kpi-top"><div><div class="kpi-value">' + c.value + ' <small>' + c.unit + '</small></div>' +
+        '<div class="kpi-label">' + c.label + '</div></div>' +
+        '<div class="kpi-icon">' + c.icon + '</div></div>' +
+        '<div class="kpi-foot">' + footHtml + '</div></div>';
+    }).join('');
+
+    document.getElementById('kpiGrid').innerHTML = html;
+
+    document.querySelectorAll('.branch-card').forEach(function (card) {
+      card.classList.toggle('selected', state.scope !== 'total' && card.dataset.branch === state.scope);
+    });
+  }
+
+  /* ================= TREND CHART ================= */
+  function seededNoise(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    return Math.sin(h) * 0.5;
+  }
+  function genSeries(baseEnd, trendPct, n, seed) {
+    var start = baseEnd / (1 + trendPct / 100);
+    var vals = [];
+    for (var i = 0; i < n; i++) {
+      var t = n === 1 ? 1 : i / (n - 1);
+      var linear = start + (baseEnd - start) * t;
+      var noise = seededNoise(seed + i) * baseEnd * 0.006;
+      vals.push(i === n - 1 ? baseEnd : linear + noise);
+    }
+    return vals;
+  }
+  function toPoints(vals, minV, maxV) {
+    var n = vals.length;
+    var pad = 10, w = 280, top = 15, bottom = 97;
+    return vals.map(function (v, i) {
+      var x = pad + (n === 1 ? 0 : i * (w / (n - 1)));
+      var ratio = maxV === minV ? 0.5 : (v - minV) / (maxV - minV);
+      var y = bottom - ratio * (bottom - top);
+      return { x: x, y: y };
+    });
+  }
+  function renderTrend() {
+    var n = state.range === 7 ? 7 : (state.range === 90 ? 12 : 10);
+    var periodFactor = state.range / 30;
+    var base = MAC_BASE[state.mac];
+
+    var seriesCn1 = genSeries(base.cn1, CN_TREND_PCT_30D.cn1 * periodFactor, n, 'cn1' + state.mac);
+    var seriesCn2 = genSeries(base.cn2, CN_TREND_PCT_30D.cn2 * periodFactor, n, 'cn2' + state.mac);
+    var seriesCn3 = genSeries(base.cn3, CN_TREND_PCT_30D.cn3 * periodFactor, n, 'cn3' + state.mac);
+
+    var all = seriesCn1.concat(seriesCn2, seriesCn3);
+    var minV = Math.min.apply(null, all) * 0.985;
+    var maxV = Math.max.apply(null, all) * 1.015;
+
+    function draw(id, dotId, vals, key) {
+      var pts = toPoints(vals, minV, maxV);
+      var str = pts.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ');
+      document.getElementById(id).setAttribute('points', str);
+      var last = pts[pts.length - 1];
+      document.getElementById(dotId).setAttribute('cx', last.x.toFixed(1));
+      document.getElementById(dotId).setAttribute('cy', last.y.toFixed(1));
+      var el = document.getElementById(id);
+      var dimmed = state.scope !== 'total' && state.scope !== key;
+      el.setAttribute('opacity', dimmed ? 0.28 : 1);
+      document.getElementById(dotId).setAttribute('opacity', dimmed ? 0.28 : 1);
+    }
+    draw('lineCn1', 'dotCn1', seriesCn1, 'cn1');
+    draw('lineCn2', 'dotCn2', seriesCn2, 'cn2');
+    draw('lineCn3', 'dotCn3', seriesCn3, 'cn3');
+
+    var changes = {
+      cn1: (seriesCn1[seriesCn1.length - 1] - seriesCn1[0]) / seriesCn1[0] * 100,
+      cn2: (seriesCn2[seriesCn2.length - 1] - seriesCn2[0]) / seriesCn2[0] * 100,
+      cn3: (seriesCn3[seriesCn3.length - 1] - seriesCn3[0]) / seriesCn3[0] * 100
+    };
+    var worstKey = Object.keys(changes).reduce(function (a, b) { return changes[a] <= changes[b] ? a : b; });
+    var worstVal = changes[worstKey];
+    var labelMap = { cn1: 'CN1', cn2: 'CN2', cn3: 'CN3' };
+    var macLabel = state.mac === 'all' ? 'tất cả mác' : state.mac.toUpperCase();
+    var callout = document.getElementById('trendCallout');
+    if (worstVal <= -1.5) {
+      callout.className = 'chart-callout warn';
+      callout.innerHTML = '⚠ ' + labelMap[worstKey] + ' giảm ' + fmt1(Math.abs(worstVal)) + '% trong ' + state.range + ' ngày qua (' + macLabel + ') — kiểm tra danh sách đơn đã duyệt dưới giá sàn.';
+    } else {
+      callout.className = 'chart-callout ok';
+      callout.innerHTML = '✓ Không có chi nhánh nào giảm giá quá 1,5% trong ' + state.range + ' ngày qua (' + macLabel + ').';
+    }
+  }
+
+  /* ================= DECISION MODAL ================= */
+  var pending = null;
+  function openDecisionModal(id, action) {
+    pending = { id: id, action: action };
+    document.getElementById('modalTitle').textContent = action === 'approve' ? 'Duyệt đề nghị' : 'Từ chối đề nghị';
+    document.getElementById('modalSub').textContent = action === 'approve'
+      ? 'Ghi chú sẽ được lưu vào nhật ký hệ thống (audit log).'
+      : 'Vui lòng ghi rõ lý do từ chối để NVKD/GĐ CN nắm được.';
+    var confirmBtn = document.getElementById('modalConfirm');
+    confirmBtn.textContent = action === 'approve' ? 'Xác nhận duyệt' : 'Xác nhận từ chối';
+    confirmBtn.className = action === 'approve' ? 'btn btn-approve' : 'btn btn-reject';
+    document.getElementById('modalNote').value = '';
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeModal(overlayId) { document.getElementById(overlayId).classList.remove('show'); pending = null; }
+  function confirmModal() {
+    if (!pending) return;
+    var card = document.getElementById(pending.id);
+    card.classList.add('decided', pending.action === 'approve' ? 'approved' : 'rejected');
+    var banner = card.querySelector('.decided-banner.' + (pending.action === 'approve' ? 'approve' : 'reject'));
+    var now = new Date();
+    banner.querySelector('.ts').textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    try { localStorage.setItem('rmcms_' + pending.id, pending.action); } catch (e) {}
+    closeModal('overlay');
+    updatePendingCount();
+    toast(pending.action === 'approve' ? 'Đã duyệt — ghi vào audit log' : 'Đã từ chối — ghi vào audit log');
+  }
+  document.getElementById('overlay').addEventListener('click', function (e) { if (e.target === this) closeModal('overlay'); });
+
+  function updatePendingCount() {
+    var total = document.querySelectorAll('.approval-card').length;
+    var left = document.querySelectorAll('.approval-card:not(.decided)').length;
+    var el = document.getElementById('pendingCount');
+    if (left === 0) {
+      el.textContent = '· Đã xử lý hết ✓';
+      el.style.color = 'var(--success)';
+    } else {
+      el.textContent = '· ' + left;
+      el.style.color = 'var(--danger)';
+    }
+  }
+
+  /* ================= TRANSFER MODAL ================= */
+  var ALL_BRANCHES = ['CN1 — Trung tâm', 'CN2 — Bình Dương', 'CN3 — Miền Đông'];
+  var transferSource = null;
+  function openTransferModal(sourceName) {
+    transferSource = sourceName;
+    document.getElementById('transferSub').textContent = 'Từ ' + sourceName + ' — chọn chi nhánh đích và số lượng cần điều chuyển.';
+    var destSel = document.getElementById('transferDest');
+    destSel.innerHTML = ALL_BRANCHES.filter(function (b) { return b !== sourceName; })
+      .map(function (b) { return '<option value="' + b + '">' + b + '</option>'; }).join('');
+    document.getElementById('transferQty').value = 1;
+    document.getElementById('transferReason').value = '';
+    document.getElementById('transferOverlay').classList.add('show');
+  }
+  document.getElementById('transferOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal('transferOverlay'); });
+  function submitTransfer() {
+    var type = document.getElementById('transferType').value;
+    var dest = document.getElementById('transferDest').value;
+    var qty = document.getElementById('transferQty').value;
+    closeModal('transferOverlay');
+    toast('Đã gửi đề nghị điều chuyển ' + qty + ' ' + type + ' từ ' + transferSource + ' → ' + dest + ' (chờ GĐ 2 chi nhánh duyệt)');
+  }
+
+  /* ================= WIRE UP CONTROLS ================= */
+  document.getElementById('scopeCtl').addEventListener('click', function (e) {
+    var btn = e.target.closest('button'); if (!btn) return;
+    this.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.scope = btn.dataset.scope;
+    renderKpis(); renderTrend();
+  });
+  document.getElementById('periodCtl').addEventListener('click', function (e) {
+    var btn = e.target.closest('button'); if (!btn) return;
+    this.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.period = btn.dataset.period;
+    renderKpis();
+  });
+  document.getElementById('rangeCtl').addEventListener('click', function (e) {
+    var btn = e.target.closest('button'); if (!btn) return;
+    this.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    state.range = parseInt(btn.dataset.range, 10);
+    renderTrend();
+  });
+  document.getElementById('macSelect').addEventListener('change', function () {
+    state.mac = this.value;
+    renderTrend();
+  });
+
+  /* ================= INIT ================= */
+  try {
+    ['ap1', 'ap2'].forEach(function (id) {
+      var saved = localStorage.getItem('rmcms_' + id);
+      if (saved) {
+        var card = document.getElementById(id);
+        card.classList.add('decided');
+        var banner = card.querySelector('.decided-banner.' + saved);
+        banner.querySelector('.ts').textContent = 'trước đó';
+      }
+    });
+  } catch (e) {}
+  updatePendingCount();
+  renderKpis();
+  renderTrend();
+</script>
+</body>
+</html>

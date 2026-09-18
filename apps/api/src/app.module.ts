@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AdminModule } from './modules/admin/admin.module';
 import { ArModule } from './modules/ar/ar.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { ContractModule } from './modules/contract/contract.module';
 import { CrmModule } from './modules/crm/crm.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
@@ -19,6 +22,7 @@ import { ReportingModule } from './modules/reporting/reporting.module';
 @Module({
   imports: [
     HealthModule,
+    AuthModule,
     // M01..M14, M16 (SRS SS4) - M15 (Mobile App) la client rieng, khong nam trong API.
     AdminModule,
     CrmModule,
@@ -35,6 +39,11 @@ import { ReportingModule } from './modules/reporting/reporting.module';
     ArModule,
     ReportingModule,
     IntegrationModule,
+  ],
+  providers: [
+    // Guard toan cuc: moi route yeu cau JWT hop le, tru khi danh dau @Public()
+    // (xem modules/auth/public.decorator.ts). Vá Finding 1 cua security-review.
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}

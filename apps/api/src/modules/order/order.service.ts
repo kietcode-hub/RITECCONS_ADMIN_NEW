@@ -1,5 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { checkCreditLimit, canReduceOrderVolume, isUrgentOrder } from '@rmc-ms/business-rules';
+import {
+  assertBranchScope,
+  checkCreditLimit,
+  canReduceOrderVolume,
+  isInBranchScope,
+  isUrgentOrder,
+  UserBranchScope,
+} from '@rmc-ms/business-rules';
 import { Order, OrderStatus, PumpMethod } from '@rmc-ms/shared-types';
 import { randomUUID } from 'crypto';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -31,7 +38,10 @@ export class OrderService {
   // Cut-off theo chi nhanh - se thay bang Branch that (E-02, FR-M01-09)
   private readonly cutoffByBranch = new Map([['CN1', '16:00']]);
 
-  create(dto: CreateOrderDto): Order {
+  create(dto: CreateOrderDto, scope: UserBranchScope): Order {
+    // BRULE-17: khong duoc tao du lieu cho chi nhanh ngoai pham vi duoc gan
+    assertBranchScope(dto.branchId, scope);
+
     const creditInput = this.creditLimitsByCustomer.get(dto.customerId);
     if (!creditInput) {
       throw new NotFoundException(`Khong tim thay ho so han muc cua khach hang ${dto.customerId}`);
@@ -64,25 +74,27 @@ export class OrderService {
     return order;
   }
 
-  findAll(): Order[] {
-    return Array.from(this.orders.values());
+  findAll(scope: UserBranchScope): Order[] {
+    // BRULE-17: loc theo pham vi chi nhanh o tang service, khong dua vao client
+    return Array.from(this.orders.values()).filter((o) => isInBranchScope(o.branchId, scope));
   }
 
-  findOne(id: string): Order {
+  findOne(id: string, scope: UserBranchScope): Order {
     const order = this.orders.get(id);
     if (!order) throw new NotFoundException(`Khong tim thay don hang ${id}`);
+    assertBranchScope(order.branchId, scope);
     return order;
   }
 
   /** FR-M05-10: gan cap phoi cho don (Ky thuat xac nhan gia y de xuat cua he thong). */
-  assignMixDesign(id: string, mixDesignId: string): Order {
-    const order = this.findOne(id);
+  assignMixDesign(id: string, mixDesignId: string, scope: UserBranchScope): Order {
+    const order = this.findOne(id, scope);
     order.mixDesignId = mixDesignId;
     return order;
   }
 
-  updateVolume(id: string, newVolumeM3: number, alreadyDeliveredM3: number): Order {
-    const order = this.findOne(id);
+  updateVolume(id: string, newVolumeM3: number, alreadyDeliveredM3: number, scope: UserBranchScope): Order {
+    const order = this.findOne(id, scope);
 
     // BRULE-14: khong cho sua m3 don xuong duoi m3 da giao thuc te
     const check = canReduceOrderVolume(newVolumeM3, alreadyDeliveredM3);

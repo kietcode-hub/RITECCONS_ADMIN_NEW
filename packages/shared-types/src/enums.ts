@@ -70,3 +70,19 @@ export enum PumpMethod {
   LINE_PUMP = 'LINE_PUMP', // Bom tinh
   DIRECT_DISCHARGE = 'DIRECT_DISCHARGE', // Xa truc tiep
 }
+
+// 12 vai tro he thong theo SRS SS12.1 (ROLE-01..12)
+export enum UserRole {
+  SALES_REP = 'SALES_REP', // Nhan vien Kinh doanh
+  SALES_MANAGER = 'SALES_MANAGER', // Truong phong Kinh doanh
+  TECHNICAL_STAFF = 'TECHNICAL_STAFF', // Nhan vien Ky thuat
+  TECHNICAL_MANAGER = 'TECHNICAL_MANAGER', // Truong Ky thuat cong ty
+  PLANNING_STAFF = 'PLANNING_STAFF', // Nhan vien Ke hoach
+  DISPATCHER = 'DISPATCHER', // Dieu hanh
+  DISPATCH_MANAGER = 'DISPATCH_MANAGER', // Truong Dieu hanh
+  DRIVER = 'DRIVER', // Tai xe / van hanh bom
+  BRANCH_MANAGER = 'BRANCH_MANAGER', // Giam doc chi nhanh
+  EXECUTIVE = 'EXECUTIVE', // Ban lanh dao cong ty
+  ACCOUNTANT = 'ACCOUNTANT', // Ke toan
+  ADMIN = 'ADMIN', // Quan tri he thong
+}

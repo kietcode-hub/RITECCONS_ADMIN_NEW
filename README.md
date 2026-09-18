@@ -37,17 +37,29 @@ npm run test -w packages/business-rules -- creditLimit.test.ts
 npm run test -w apps/api -- order.service.spec.ts
 ```
 
+Gọi API thật (sau khi `npx nest build && node dist/main.js` trong `apps/api`):
+```bash
+curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" \
+  -d '{"email":"hung.nvkd@rmc-ms.vn","password":"password123"}'
+# lay "accessToken" tu ket qua tren, dung cho moi request khac:
+curl http://localhost:3000/orders -H "Authorization: Bearer <accessToken>"
+```
+8 tài khoản demo (mật khẩu chung `password123`) xem trong `apps/api/src/modules/auth/auth.service.ts` — khớp persona trong PRD §2 (Hùng-NVKD, Trang-Kỹ thuật, Nam-Kế hoạch, Dũng-Điều hành, Chị Hà-Kế toán, Chị Loan-GĐ CN1, Anh Sơn-TGĐ, IT Admin).
+
 ## Trạng thái hiện tại
 
 - ✅ `packages/business-rules`: 22 BRULE đã cài đặt đầy đủ, 41 unit test pass.
-- ✅ `apps/api`: khung NestJS với 16 module theo đúng ranh giới M01–M16 (SRS §4). 3 module đã wiring đầy đủ với `business-rules` (in-memory, chưa nối DB):
-  - `order` (M05) — BRULE-02 (hạn mức công nợ), BRULE-13 (đơn gấp/cut-off), BRULE-14 (không giảm khối lượng dưới đã giao)
-  - `planning` (M08) — BRULE-03 (vượt công suất trạm, cần lý do), BRULE-04 (chặn chốt kế hoạch khi đơn chưa có cấp phối), tính nhu cầu vật tư (FR-M08-03)
-  - `dispatch` (M10) — BRULE-11 (cảnh báo quá 90 phút từ lúc trộn), BRULE-12 (chặn phân xe trùng lịch/bảo dưỡng/vượt tải), tính chu kỳ xe
+- ✅ **Auth thật**: JWT (`@nestjs/passport` + `@nestjs/jwt`), guard toàn cục (mọi route yêu cầu token trừ `@Public()`), 8 user demo in-memory theo đúng vai trò/chi nhánh trong URD. Chưa có refresh token, chưa nối DB người dùng thật.
+- ✅ **BRULE-17 (phân quyền chi nhánh) đã enforce thật** trong `order`/`planning`/`dispatch` — không chỉ là hàm có sẵn chưa dùng nữa (đây là lỗ hổng #1 phát hiện ở security-review, đã vá). `BranchScopeViolationError` được map sang HTTP 403 qua `BranchScopeExceptionFilter`.
+- ✅ **Validation thật**: `class-validator` + `ValidationPipe({whitelist, forbidNonWhitelisted, transform})` toàn cục — request sai kiểu bị chặn 400 trước khi chạm business-rule (lỗ hổng #2 đã vá).
+- ✅ `apps/api`: khung NestJS với 16 module theo đúng ranh giới M01–M16 (SRS §4) + module `auth` cross-cutting. 3 module đã wiring đầy đủ với `business-rules` + auth + branch-scope (in-memory, chưa nối DB):
+  - `order` (M05) — BRULE-02 (hạn mức công nợ), BRULE-13 (đơn gấp/cut-off), BRULE-14 (không giảm khối lượng dưới đã giao), BRULE-17 (phân quyền chi nhánh)
+  - `planning` (M08) — BRULE-03 (vượt công suất trạm, cần lý do), BRULE-04 (chặn chốt kế hoạch khi đơn chưa có cấp phối), BRULE-17, tính nhu cầu vật tư (FR-M08-03)
+  - `dispatch` (M10) — BRULE-11 (cảnh báo quá 90 phút từ lúc trộn), BRULE-12 (chặn phân xe trùng lịch/bảo dưỡng/vượt tải), BRULE-17, tính chu kỳ xe
 
-  12 module còn lại đang là **placeholder** (giữ ranh giới kiến trúc, chưa có logic) — xem `apps/api/src/modules/order` làm mẫu khi triển khai tiếp.
-- ✅ `apps/api/prisma/schema.prisma`: schema DB cho luồng lõi (Khách hàng → Đơn hàng → Kế hoạch → Chuyến → Phiếu giao hàng). Chưa kết nối DB thật — cần `DATABASE_URL` (xem `apps/api/.env.example`) rồi chạy `npx prisma migrate dev`.
-- ⏳ `apps/web`, `apps/mobile`: chưa scaffold.
+  12 module còn lại đang là **placeholder** (giữ ranh giới kiến trúc, chưa có logic) — xem `apps/api/src/modules/order` làm mẫu khi triển khai tiếp (nhớ mang theo cả `@CurrentUser()` + branch-scope, không chỉ business-rules).
+- ✅ `apps/api/prisma/schema.prisma`: schema DB cho luồng lõi (Khách hàng → Đơn hàng → Kế hoạch → Chuyến → Phiếu giao hàng). **Chưa kết nối DB thật** — môi trường dev hiện không có Postgres/Docker; cần `DATABASE_URL` (xem `apps/api/.env.example`) rồi chạy `npx prisma migrate dev` khi có DB.
+- ⏳ CI/pre-commit hook, `apps/web`, `apps/mobile`: chưa làm — xem [`files/06_Ke_Hoach_Trien_Khai_Tong_The_RMC-MS.md`](files/06_Ke_Hoach_Trien_Khai_Tong_The_RMC-MS.md) Giai đoạn 0 mục 0.4–0.6.
 
 ## Quy ước bắt buộc
 

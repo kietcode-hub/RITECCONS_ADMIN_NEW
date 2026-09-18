@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+/*
+  Design tokens sourced from design-system/rmc-ms/MASTER.md
+  (RMC-MS design system — see that file before changing these values).
+*/
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-primary: #0f172a;
+  --color-on-primary: #ffffff;
+  --color-secondary: #334155;
+  --color-on-secondary: #ffffff;
+  --color-accent: #0369a1;
+  --color-on-accent: #ffffff;
+  --color-background: #f8fafc;
+  --color-foreground: #020617;
+  --color-card: #ffffff;
+  --color-card-foreground: #020617;
+  --color-muted: #e8ecf1;
+  --color-muted-foreground: #475569;
+  --color-border: #e2e8f0;
+  --color-destructive: #dc2626;
+  --color-on-destructive: #ffffff;
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --color-destructive-soft: #fee2e2;
+  --color-ring: #0f172a;
+
+  /* dark-mode sidebar (always dark regardless of theme, per existing mocks) */
+  --color-sidebar-bg: #1e2541;
+  --color-sidebar-bg-hover: #262e52;
+  --color-sidebar-border: #2b3358;
+  --color-sidebar-text: #8a93b8;
+  --color-sidebar-text-active: #ffffff;
+  --color-sidebar-accent: #ff6b4a;
+
+  --space-xs: 0.125rem;
+  --space-sm: 0.25rem;
+  --space-md: 0.5rem;
+  --space-lg: 0.75rem;
+  --space-xl: 1rem;
+  --space-2xl: 1.5rem;
+  --space-3xl: 2rem;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background: #0b1220;
+    --color-foreground: #f1f5f9;
+    --color-card: #131b2e;
+    --color-card-foreground: #f1f5f9;
+    --color-muted: #101728;
+    --color-muted-foreground: #a8b3c7;
+    --color-border: #253150;
+    --color-primary: #4f7df3;
+    --color-on-primary: #06101f;
+  }
+}
+:root[data-theme='dark'] {
+  --color-background: #0b1220;
+  --color-foreground: #f1f5f9;
+  --color-card: #131b2e;
+  --color-card-foreground: #f1f5f9;
+  --color-muted: #101728;
+  --color-muted-foreground: #a8b3c7;
+  --color-border: #253150;
+  --color-primary: #4f7df3;
+  --color-on-primary: #06101f;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
